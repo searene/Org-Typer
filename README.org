@@ -1,0 +1,5 @@
+* Start development
+
+#+begin_src sh
+yarn run tauri dev
+#+end_src
