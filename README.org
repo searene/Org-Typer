@@ -1,5 +1,10 @@
 * Start development
 
 #+begin_src sh
+
+# Install dependencies
+yarn
+
+# Start the dev server
 yarn run tauri dev
 #+end_src
