@@ -9,6 +9,6 @@ describe("App Test", () => {
 
   it("should show title", () => {
     render(<App />);
-    expect(screen.getByText(/Test/)).toBeDefined()
+    expect(screen.getByText(/text/)).toBeDefined()
   })
 });
