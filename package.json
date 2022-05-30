@@ -10,7 +10,9 @@
     "tauri": "tauri dev"
   },
   "dependencies": {
+    "@emotion/css": "^11.9.0",
     "@tauri-apps/api": "^1.0.0-rc.6",
+    "prismjs": "^1.28.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "slate": "^0.80.0",
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@tauri-apps/cli": "^1.0.0-rc.13",
     "@testing-library/react": "^13.3.0",
+    "@types/prismjs": "^1.26.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^1.3.0",
