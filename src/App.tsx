@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
-import LiveEditor from './LiveEditor'
+import LiveEditor from './editor/LiveEditor'
 
 function App() {
   const [count, setCount] = useState(0)
