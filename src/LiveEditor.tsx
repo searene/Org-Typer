@@ -1,28 +1,28 @@
 import { useState } from "react"
 import Heading from "./components/Heading"
+import { BaseEditor, createEditor, Descendant } from 'slate'
+import { ReactEditor, Slate, withReact } from 'slate-react'
+
+type CustomElement = { type: 'paragraph'; children: CustomText[] }
+type CustomText = { text: string }
+
+declare module 'slate' {
+  interface CustomTypes {
+    Editor: BaseEditor & ReactEditor
+    Element: CustomElement
+    Text: CustomText
+  }
+}
 
 export default function LiveEditor() {
 
-    const [input, setInput] = useState("")
+    const initialValue: Descendant[] = []
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-        setInput(e.target.value);
-    }
+    const [editor] = useState(() => withReact(createEditor()))
 
     return (
-        <div contentEditable="true"
-            suppressContentEditableWarning={true}
-            onBlur={handleBlur}
-            style={{
-                width: "100%",
-                height: "100%",
-                position: "absolute",
-                top: 0,
-                left: 0,
-            }}>
-
-            <Heading text="Test" />
-        </div>
+        <Slate editor={editor} value={initialValue}>
+            test
+        </Slate>
     )
-
 }
