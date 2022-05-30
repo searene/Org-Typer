@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
-import { BaseEditor, createEditor, Descendant, Editor, NodeEntry, Transforms, Text } from 'slate'
+import { BaseEditor, createEditor, Descendant, Editor, NodeEntry, Transforms, Text, Node } from 'slate'
 import { Editable, ReactEditor, RenderLeafProps, Slate, withReact } from 'slate-react'
 import { HistoryEditor } from 'slate-history'
 import CustomText from "./CustomText"
@@ -19,16 +19,14 @@ declare module 'slate' {
 
 export default function LiveEditor() {
 
+  const [editorValue, setEditorValue] = useState<Descendant[]>([{
+    type: 'paragraph',
+    children: [{ text: '' }],
+  }])
+
   const renderLeaf = useCallback((props: any): JSX.Element => {
     return <Leaf {...props} />;
   }, []);
-
-  const initialValue: Descendant[] = [
-    {
-      type: 'paragraph',
-      children: [{ text: 'abc' }],
-    },
-  ]
 
   const decorate = useCallback((nodeEntry: NodeEntry) => {
     const node = nodeEntry[0];
@@ -53,32 +51,18 @@ export default function LiveEditor() {
 
   const editor = useMemo(() => withReact(createEditor()), [])
 
-  const renderElement = useCallback((props: any) => {
-    switch (props.element.type) {
-      case 'code':
-        return <CodeElement {...props} />
-      default:
-        return <ParagraphElement {...props} />
-    }
-  }, [])
-
   return (
-    <Slate editor={editor} value={initialValue}>
+    <Slate editor={editor} value={editorValue} onChange={setEditorValue}>
       <Editable
-        renderElement={renderElement}
         decorate={decorate}
         renderLeaf={renderLeaf}
-        onKeyDown={event => {
-          if (event.key === '`' && event.ctrlKey) {
-            // Prevent the "`" from being inserted by default.
-            event.preventDefault()
-            // Otherwise, set the currently selected blocks type to "code".
-            Transforms.setNodes(
-              editor,
-              { type: 'code' },
-              { match: n => Editor.isBlock(editor, n) }
-            )
-          }
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          margin: "50px",
         }}
       />
     </Slate>

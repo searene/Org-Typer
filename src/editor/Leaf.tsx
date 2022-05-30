@@ -4,15 +4,25 @@ import OrgNodeType from "../parser/node/OrgNodeType";
 export interface CustomLeafProps extends RenderLeafProps {
     leaf: {
         text: string,
-        type: OrgNodeType,
+        type?: OrgNodeType,
     }
 }
 
 export function Leaf(props: CustomLeafProps) {
+
+    const renderSwitch = (props: CustomLeafProps) => {
+        switch (props.leaf.type) {
+            case undefined:
+            case OrgNodeType.Text:
+                return <span {...props.attributes}>{props.children}</span>
+            default:
+                throw new Error("Unsupported node type: " + props.leaf.type)
+        }
+    }
+
     return (
         <>
-            {props.leaf.type == OrgNodeType.Text &&
-                <span {...props.attributes}>{props.children}</span>}
+            {renderSwitch(props)}
         </>
     )
 }
