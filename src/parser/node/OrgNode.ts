@@ -11,5 +11,4 @@ export default interface OrgNode {
     end: number;
 
     children: OrgNode[];
-
 }

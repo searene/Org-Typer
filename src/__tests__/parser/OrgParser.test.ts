@@ -8,5 +8,5 @@ describe("Test org parser", () => {
         const orgParser = new OrgParser("abc");
         const orgNodes = orgParser.parse();
         expect(orgNodes).toEqual([new TextOrgNode(0, 3, "abc")])
-    })
-})
+    });
+});
