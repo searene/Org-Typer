@@ -56,6 +56,7 @@ export default function LiveEditor() {
       <Editable
         decorate={decorate}
         renderLeaf={renderLeaf}
+        placeholder="Write some org-mode..."
         style={{
           width: "100%",
           height: "100%",

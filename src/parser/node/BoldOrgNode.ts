@@ -6,7 +6,7 @@ export default class BoldOrgNode implements OrgNode {
     type = OrgNodeType.Bold;
     children: OrgNode[];
 
-    constructor(public start: number, public end: number, child: OrgNode) {
-        this.children = [child];
+    constructor(public start: number, public end: number, child: OrgNode | undefined) {
+        this.children = child == undefined ? [] : [child];
     }
 }
