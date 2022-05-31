@@ -51,6 +51,7 @@ export default class OrgParser {
             }
         }
         textNode.text = text.substring(startPos, currentPos);
+        textNode.end = currentPos;
         parent?.children.push(textNode);
         return textNode;
     }
@@ -67,7 +68,7 @@ export default class OrgParser {
 
         // end of the bold node
         if (parent != undefined && parent instanceof BoldOrgNode) {
-            parent.end = startPos;
+            parent.end = startPos + 1;
             return parent;
         }
 
