@@ -1,82 +1,95 @@
 import BoldOrgNode from "./node/BoldOrgNode";
+import DocumentOrgNode from "./node/DocumentOrgNode";
 import OrgNode from "./node/OrgNode";
 import TextOrgNode from "./node/TextOrgNode";
 
+enum RuleType {
+    Bold,
+}
+
+interface Rule {
+    ruleType: RuleType,
+    orgNodeInitiator: (start: number, end: number) => OrgNode,
+    delimiterLen: number,
+    pattern: RegExp,
+}
+
 export default class OrgParser { 
 
-    constructor(private readonly text: string) {}
+    private rules: Rule[] = [{
+        ruleType: RuleType.Bold,
+        orgNodeInitiator: (start, end) => new BoldOrgNode(start, end, undefined),
+        delimiterLen: 1,
+        pattern: /\*([^\s].*)\*/g,
+    }]
 
-    public parse(): OrgNode[] {
-        return this.parseNodes(undefined, this.text, 0);
+    constructor() {}
+
+    public parse(text: string): OrgNode {
+        const root = new DocumentOrgNode(0, text.length, []);
+        this.parseChildren(text, root, 0, text.length);
+        return root;
     }
 
-    private parseNodes(parent: OrgNode | undefined, text: string, startPos: number): OrgNode[] {
-        let currentPos = startPos;
-        const res = [];
-        while (currentPos < text.length) {
-            const orgNode = this.getNextOrgNode(parent, text, currentPos)
-            if (orgNode == undefined) {
-                throw new Error("Org node is empty before reaching the end of the text.");
-            }
-            res.push(orgNode);
-            currentPos = orgNode.end;
+    private parseChildren(text: string, parent: OrgNode, start: number, end: number) {
+        this.parseInlineChildren(text, parent, start, end);
+    }
+
+    private parseInlineChildren(text: string, parent: OrgNode, start: number, end: number) {
+        for (const rule of this.rules) {
+            this.parseInlineChildrenByRule(rule, text, parent, start, end);
         }
-        return res;
+        this.fillInPlainTextChildren(text, parent, start, end);
     }
 
-    private getNextOrgNode(parent: OrgNode | undefined, text: string, startPos: number): OrgNode | undefined {
-        let currentPos = startPos;
-        while (currentPos < text.length) {
-            if(this.isBoldDelimiter(text, currentPos)) {
-                const boldNode = this.parseBoldNode(parent, text, startPos);
-                currentPos = boldNode.end;
-                return boldNode;
+    private fillInPlainTextChildren(text: string, parent: OrgNode, start: number, end: number) {
+        const unfilledRanges = this.getUnfilledRanges(parent);
+        for (const [start, end] of unfilledRanges) {
+            const textNode = new TextOrgNode(start, end);
+            parent.children.push(textNode);
+        }
+        parent.children.sort((a, b) => a.start - b.start);
+    }
+
+    private getUnfilledRanges(parent: OrgNode): [number, number][] {
+        let pos = parent.getStartIndexOfChildren();
+        let childIndex = 0;
+        const res: [number, number][] = [];
+        while (true) {
+            if (childIndex >= parent.children.length) {
+                if (pos >= parent.getEndIndexOfChildren()) {
+                    return res;
+                } else {
+                    res.push([pos, parent.getEndIndexOfChildren()]);
+                    return res;
+                }
+            }
+            const child = parent.children[childIndex];
+            if (pos < child.start) {
+                res.push([pos, child.start]);
+                pos = child.end;
+                childIndex++;
+            } else if (pos == child.start) {
+                pos = child.end;
+                childIndex++;
             } else {
-                const textNode = this.parseTextNode(parent, text, startPos);
-                currentPos = textNode.end;
-                return textNode;
+                throw new Error("pos should not be greater than child.start");
             }
         }
-        return undefined;
     }
 
-    private parseTextNode(parent: OrgNode | undefined, text: string, startPos: number): OrgNode {
-        const textNode = new TextOrgNode(startPos, startPos, "");
-        let currentPos = startPos;
-        while (currentPos < text.length) {
-            if (this.isText(text, currentPos)) {
-                currentPos++;
-            } else {
-                break;
-            }
+    private parseInlineChildrenByRule(rule: Rule, text: string, parent: OrgNode, start: number, end: number) {
+        const match = rule.pattern.exec(text);
+        if (match == null) {
+            return;
         }
-        textNode.text = text.substring(startPos, currentPos);
-        textNode.end = currentPos;
-        parent?.children.push(textNode);
-        return textNode;
+        const matchedText = match[0]
+        const innerString = match[1]
+        const startOfChild = start + match.index;
+        const endOfChild = startOfChild + matchedText.length;
+        const orgNode = rule.orgNodeInitiator(startOfChild, endOfChild);
+        this.parseInlineChildren(innerString, orgNode, startOfChild + rule.delimiterLen, endOfChild - rule.delimiterLen);
+        parent.children.push(orgNode);
     }
-
-    private isText(text: string, startPos: number): boolean {
-        return !this.isBoldDelimiter(text, startPos);
-    }
-
-    private isBoldDelimiter(text: string, startPos: number): boolean {
-        return text[startPos] === '*';
-    }
-
-    private parseBoldNode(parent: OrgNode | undefined, text: string, startPos: number): OrgNode {
-
-        // end of the bold node
-        if (parent != undefined && parent instanceof BoldOrgNode) {
-            parent.end = startPos + 1;
-            return parent;
-        }
-
-        // start of the bold node
-        const boldNode = new BoldOrgNode(startPos, startPos + 1, undefined);
-        this.parseNodes(boldNode, text, startPos + 1);
-        return boldNode;
-    }
-
 }
 

@@ -1,4 +1,5 @@
 enum OrgNodeType {
+    Document,
     Text,
     Bold,
     Itatlic,

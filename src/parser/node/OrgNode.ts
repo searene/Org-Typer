@@ -11,4 +11,8 @@ export default interface OrgNode {
     end: number;
 
     children: OrgNode[];
+
+    getStartIndexOfChildren(): number;
+
+    getEndIndexOfChildren(): number;
 }
