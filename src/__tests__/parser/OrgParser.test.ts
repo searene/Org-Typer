@@ -42,4 +42,11 @@ describe("Test org parser", () => {
             new TextOrgNode(0, 1),
             new ItalicOrgNode(1, 6, new TextOrgNode(2, 5))]))
     })
+
+    it("can parse bold and italic", () => {
+        const orgParser = new OrgParser();
+        const orgNode = orgParser.parse("/*abc*/");
+        expect(orgNode).toEqual(new DocumentOrgNode(0, 7, [
+            new ItalicOrgNode(0, 7, new BoldOrgNode(1, 6, new TextOrgNode(2, 5)))]))
+    })
 });

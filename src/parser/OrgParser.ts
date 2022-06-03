@@ -3,32 +3,9 @@ import DocumentOrgNode from "./node/DocumentOrgNode";
 import ItalicOrgNode from "./node/ItalicOrgNode";
 import OrgNode from "./node/OrgNode";
 import TextOrgNode from "./node/TextOrgNode";
-
-enum RuleType {
-    Bold,
-    Italic,
-}
-
-interface Rule {
-    ruleType: RuleType,
-    orgNodeInitiator: (start: number, end: number) => OrgNode,
-    delimiterLen: number,
-    pattern: RegExp,
-}
+import { TextRange } from "./TextRange";
 
 export default class OrgParser { 
-
-    private rules: Rule[] = [{
-        ruleType: RuleType.Bold,
-        orgNodeInitiator: (start, end) => new BoldOrgNode(start, end, undefined),
-        delimiterLen: 1,
-        pattern: /\*([^\s].*)\*/g,
-    }, {
-        ruleType: RuleType.Italic,
-        orgNodeInitiator: (start, end) => new ItalicOrgNode(start, end, undefined),
-        delimiterLen: 1,
-        pattern: /\/([^\s].*)\//g,
-    }]
 
     constructor() {}
 
@@ -43,60 +20,57 @@ export default class OrgParser {
     }
 
     private parseInlineChildren(text: string, parent: OrgNode, start: number, end: number) {
-        for (const rule of this.rules) {
-            this.parseInlineChildrenByRule(rule, text, parent, start, end);
-        }
-        this.fillInPlainTextChildren(text, parent, start, end);
-    }
-
-    private fillInPlainTextChildren(text: string, parent: OrgNode, start: number, end: number) {
-        const unfilledRanges = this.getUnfilledRanges(parent);
-        for (const [start, end] of unfilledRanges) {
-            const textNode = new TextOrgNode(start, end);
-            parent.children.push(textNode);
-        }
-        parent.children.sort((a, b) => a.start - b.start);
-    }
-
-    private getUnfilledRanges(parent: OrgNode): [number, number][] {
-        let pos = parent.getStartIndexOfChildren();
-        let childIndex = 0;
-        const res: [number, number][] = [];
-        while (true) {
-            if (childIndex >= parent.children.length) {
-                if (pos >= parent.getEndIndexOfChildren()) {
-                    return res;
-                } else {
-                    res.push([pos, parent.getEndIndexOfChildren()]);
-                    return res;
-                }
-            }
-            const child = parent.children[childIndex];
-            if (pos < child.start) {
-                res.push([pos, child.start]);
-                pos = child.end;
-                childIndex++;
-            } else if (pos == child.start) {
-                pos = child.end;
-                childIndex++;
+        let textRange = new TextRange();
+        let pos = start;
+        while (pos < end) {
+            const noneTextOrgNode = this.getNoneTextOrgNode(text, pos, end);
+            if (noneTextOrgNode == undefined) {
+                // this is plain text
+                textRange.update(pos + 1);
+                pos++;
             } else {
-                throw new Error("pos should not be greater than child.start");
+                if (textRange.isNotEmpty()) {
+                    parent.children.push(new TextOrgNode(textRange.start!, textRange.end!));
+                    textRange.setEmpty();
+                }
+                parent.children.push(noneTextOrgNode);
+                pos = noneTextOrgNode.end;
             }
+        }
+        if (textRange.isNotEmpty()) {
+            parent.children.push(new TextOrgNode(textRange.start!, textRange.end!));
         }
     }
 
-    private parseInlineChildrenByRule(rule: Rule, text: string, parent: OrgNode, start: number, end: number) {
-        const match = rule.pattern.exec(text);
-        if (match == null) {
-            return;
+    private getNoneTextOrgNode(text: string, start: number, end: number): OrgNode | undefined {
+        const c = text[start];
+        if (c == '*') {
+            const endOfAsterisk = this.getPosOfCharInCurrentLine('*', text, start + 1, end);
+            if (endOfAsterisk != undefined) {
+                const boldOrgNode = new BoldOrgNode(start, endOfAsterisk + 1, undefined);
+                this.parseInlineChildren(text, boldOrgNode, start + 1, endOfAsterisk);
+                return boldOrgNode;
+            }
+        } else if (c == '/') {
+            const endOfSlash = this.getPosOfCharInCurrentLine('/', text, start + 1, end);
+            if (endOfSlash != undefined) {
+                const italicOrgNode = new ItalicOrgNode(start, endOfSlash + 1, undefined);
+                this.parseInlineChildren(text, italicOrgNode, start + 1, endOfSlash);
+                return italicOrgNode;
+            }
         }
-        const matchedText = match[0]
-        const innerString = match[1]
-        const startOfChild = start + match.index;
-        const endOfChild = startOfChild + matchedText.length;
-        const orgNode = rule.orgNodeInitiator(startOfChild, endOfChild);
-        this.parseInlineChildren(innerString, orgNode, startOfChild + rule.delimiterLen, endOfChild - rule.delimiterLen);
-        parent.children.push(orgNode);
+        return undefined;
+    }
+    private getPosOfCharInCurrentLine(char: string, text: string, start: number, end: number): number | undefined {
+        for (let i = start; i < end; i++) {
+            if (text[i] == char) {
+                return i;
+            }
+            if (text[i] == '\n') {
+                return undefined;
+            }
+        }
+        return undefined;
     }
 }
 
