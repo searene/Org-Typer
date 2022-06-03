@@ -1,9 +1,9 @@
 import OrgNode from "./OrgNode";
 import OrgNodeType from "./OrgNodeType";
 
-export default class BoldOrgNode implements OrgNode {
+export default class ItalicOrgNode implements OrgNode {
 
-    type = OrgNodeType.Bold;
+    type = OrgNodeType.Italic;
     children: OrgNode[];
 
     constructor(public start: number, public end: number, child: OrgNode | undefined) {

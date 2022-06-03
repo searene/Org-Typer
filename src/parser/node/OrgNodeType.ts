@@ -2,7 +2,7 @@ enum OrgNodeType {
     Document,
     Text,
     Bold,
-    Itatlic,
+    Italic,
     Heading,
     Paragraph
 }

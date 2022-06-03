@@ -1,6 +1,7 @@
 import { expect, describe, it } from 'vitest'
 import BoldOrgNode from '../../parser/node/BoldOrgNode';
 import DocumentOrgNode from '../../parser/node/DocumentOrgNode';
+import ItalicOrgNode from '../../parser/node/ItalicOrgNode';
 import TextOrgNode from '../../parser/node/TextOrgNode';
 import OrgParser from '../../parser/OrgParser'
 
@@ -32,5 +33,13 @@ describe("Test org parser", () => {
             new BoldOrgNode(3, 8, new TextOrgNode(4, 7)),
             new TextOrgNode(8, 10),
         ]))
+    })
+
+    it("can parse italic", () => {
+        const orgParser = new OrgParser();
+        const orgNode = orgParser.parse("1/abc/");
+        expect(orgNode).toEqual(new DocumentOrgNode(0, 6, [
+            new TextOrgNode(0, 1),
+            new ItalicOrgNode(1, 6, new TextOrgNode(2, 5))]))
     })
 });

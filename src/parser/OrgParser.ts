@@ -1,10 +1,12 @@
 import BoldOrgNode from "./node/BoldOrgNode";
 import DocumentOrgNode from "./node/DocumentOrgNode";
+import ItalicOrgNode from "./node/ItalicOrgNode";
 import OrgNode from "./node/OrgNode";
 import TextOrgNode from "./node/TextOrgNode";
 
 enum RuleType {
     Bold,
+    Italic,
 }
 
 interface Rule {
@@ -21,6 +23,11 @@ export default class OrgParser {
         orgNodeInitiator: (start, end) => new BoldOrgNode(start, end, undefined),
         delimiterLen: 1,
         pattern: /\*([^\s].*)\*/g,
+    }, {
+        ruleType: RuleType.Italic,
+        orgNodeInitiator: (start, end) => new ItalicOrgNode(start, end, undefined),
+        delimiterLen: 1,
+        pattern: /\/([^\s].*)\//g,
     }]
 
     constructor() {}
