@@ -1,6 +1,6 @@
 import { Path } from "slate";
 import OrgNode from "../parser/node/OrgNode";
-import OrgNodeType from "../parser/node/OrgNodeType";
+import OrgNodeType from "../parser/node/type/OrgNodeType";
 import { CustomRange } from "./CustomRange";
 
 export class RangeConverter {

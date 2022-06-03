@@ -1,5 +1,5 @@
 import { InlineStyle } from "../../style/InlineStyle";
-import OrgNodeType from "./OrgNodeType";
+import OrgNodeType from "./type/OrgNodeType";
 
 export default interface OrgNode {
 

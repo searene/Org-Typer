@@ -1,6 +1,6 @@
 import { InlineStyle } from "../../style/InlineStyle";
 import OrgNode from "./OrgNode";
-import OrgNodeType from "./OrgNodeType";
+import OrgNodeType from "./type/OrgNodeType";
 
 export default abstract class AbstractOrgNode implements OrgNode {
 

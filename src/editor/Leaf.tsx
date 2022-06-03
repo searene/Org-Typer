@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { RenderLeafProps } from "slate-react";
-import OrgNodeType from "../parser/node/OrgNodeType";
+import OrgNodeType from "../parser/node/type/OrgNodeType";
 import { InlineStyle } from "../style/InlineStyle";
 
 export interface CustomLeafProps extends RenderLeafProps {

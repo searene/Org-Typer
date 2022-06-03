@@ -1,12 +1,19 @@
 import BoldOrgNode from "./node/BoldOrgNode";
 import DocumentOrgNode from "./node/DocumentOrgNode";
+import HeaderOrgNode from "./node/HeaderOrgNode";
 import ItalicOrgNode from "./node/ItalicOrgNode";
 import OrgNode from "./node/OrgNode";
 import TextOrgNode from "./node/TextOrgNode";
 import UnderscoreOrgNode from "./node/UnderscoreOrgNode";
-import { TextRange } from "./TextRange";
+import { OffsetRange } from "./OffsetRange";
+import { HeaderShallowProcessor } from "./processor/HeaderShallowProcessor";
+import { ShallowProcessor } from "./processor/interface/ComponentProcessor";
 
 export default class OrgParser { 
+
+    private static processors: ShallowProcessor[] = [
+        new HeaderShallowProcessor(),
+    ];
 
     constructor() {}
 
@@ -21,13 +28,13 @@ export default class OrgParser {
     }
 
     private parseInlineChildren(text: string, parent: OrgNode, start: number, end: number) {
-        let textRange = new TextRange();
+        let textRange = new OffsetRange();
         let pos = start;
         while (pos < end) {
             const noneTextOrgNode = this.getNoneTextOrgNode(text, pos, end);
             if (noneTextOrgNode == undefined) {
                 // this is plain text
-                textRange.update(pos + 1);
+                textRange.updateEndPos(pos + 1);
                 pos++;
             } else {
                 if (textRange.isNotEmpty()) {
@@ -45,6 +52,13 @@ export default class OrgParser {
 
     private getNoneTextOrgNode(text: string, start: number, end: number): OrgNode | undefined {
         const c = text[start];
+        for (const shallowProcessor of OrgParser.processors) {
+            const orgNode = shallowProcessor.process(text, start, end);
+            if (orgNode != undefined) {
+                this.parseInlineChildren(text, orgNode, orgNode.getStartIndexOfChildren(), orgNode.getEndIndexOfChildren());
+                return orgNode;
+            }
+        }
         if (c == '*') {
             const endOfAsterisk = this.getPosOfCharInCurrentLine('*', text, start + 1, end);
             if (endOfAsterisk != undefined) {
@@ -69,6 +83,18 @@ export default class OrgParser {
         }
         return undefined;
     }
+    private tryGettingHeaderOrgNode(text: string, start: number, end: number): HeaderOrgNode | undefined {
+        if (!this.isLineStart(text, start)) {
+            return undefined;
+        }
+        const headerLevel = this.tryGettingHeaderLevel(text, start, end);
+        if (headerLevel == undefined) {
+            return undefined;
+        }
+    }
+    private tryGettingHeaderLevel(text: string, start: number, end: number): number | undefined {
+    }
+
     private getPosOfCharInCurrentLine(char: string, text: string, start: number, end: number): number | undefined {
         for (let i = start; i < end; i++) {
             if (text[i] == char) {
