@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useState } from "react"
-import { BaseEditor, createEditor, Descendant, Editor, NodeEntry, Transforms, Text, Node, Path } from 'slate'
-import { Editable, ReactEditor, RenderLeafProps, Slate, withReact } from 'slate-react'
+import { BaseEditor, createEditor, Descendant, NodeEntry, Text } from 'slate'
+import { Editable, ReactEditor, Slate, withReact } from 'slate-react'
 import { HistoryEditor } from 'slate-history'
 import CustomText from "./CustomText"
 import { HeadingElementType } from "./elements/HeadingElement"
-import { ParagraphElement, ParagraphElementType } from "./elements/ParagraphElement"
-import { CodeElement, CodeElementType } from "./elements/CodeElement"
+import { ParagraphElementType } from "./elements/ParagraphElement"
+import { CodeElementType } from "./elements/CodeElement"
 import OrgParser from "../parser/OrgParser"
-import { Leaf, CustomLeafProps } from "./Leaf"
-import OrgNode from "../parser/node/OrgNode"
-import { InlineStyle } from "../style/InlineStyle"
+import { Leaf } from "./Leaf"
+import { CustomRange } from "./CustomRange"
+import { RangeConverter } from "./RangeConverter"
 
 declare module 'slate' {
   interface CustomTypes {
@@ -30,19 +30,6 @@ export default function LiveEditor() {
     return <Leaf {...props} />;
   }, []);
 
-  const pushRanges = (node: OrgNode, path: Path, ranges: any[]) => {
-    for (const orgNode of node.children) {
-      ranges.push({
-        type: orgNode.type,
-        anchor: { path, offset: orgNode.start },
-        focus: { path, offset: orgNode.end },
-      });
-      for (const child of orgNode.children) {
-        pushRanges(child, path, ranges);
-      }
-    }
-  }
-
   const decorate = useCallback((nodeEntry: NodeEntry) => {
     const node = nodeEntry[0];
     const path = nodeEntry[1];
@@ -53,8 +40,7 @@ export default function LiveEditor() {
     
     const orgParser = new OrgParser();
     const rootNode = orgParser.parse(node.text)
-    const ranges: any[] = []
-    pushRanges(rootNode, path, ranges);
+    const ranges: CustomRange[] = RangeConverter.convertOrgNodeToRanges(rootNode, path);
     console.log(ranges);
     return ranges;
   }, []);

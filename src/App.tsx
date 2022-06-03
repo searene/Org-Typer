@@ -10,8 +10,8 @@ function App() {
 
   return (
     <div className="App">
-      {/* <LiveEditor /> */}
-      <MarkdownPreviewExample/>
+      <LiveEditor />
+      {/* <MarkdownPreviewExample/> */}
       {/* <CodeHighlightingExample/> */}
     </div>
   )

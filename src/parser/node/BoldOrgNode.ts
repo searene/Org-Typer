@@ -1,3 +1,4 @@
+import { InlineStyle } from "../../style/InlineStyle";
 import AbstractOrgNode from "./AbstractOrgNode";
 import OrgNode from "./OrgNode";
 import OrgNodeType from "./OrgNodeType";
@@ -20,5 +21,11 @@ export default class BoldOrgNode extends AbstractOrgNode {
     }
     getEndIndexOfChildren(): number {
         return this.end - 1;
+    }
+    getInlineStyles(): Set<InlineStyle> {
+        const res: Set<InlineStyle> = new Set();
+        this.parent?.getInlineStyles().forEach(s => res.add(s));
+        res.add(InlineStyle.Bold);
+        return res;
     }
 }

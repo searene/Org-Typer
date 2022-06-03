@@ -1,3 +1,4 @@
+import { InlineStyle } from "../../style/InlineStyle";
 import OrgNodeType from "./OrgNodeType";
 
 export default interface OrgNode {
@@ -21,4 +22,8 @@ export default interface OrgNode {
     addChild(child: OrgNode): void;
 
     addChildren(children: OrgNode[]): void;
+
+    getInlineStyles(): Set<InlineStyle>;
+
+    isLeaf() : boolean;
 }

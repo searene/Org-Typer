@@ -121,6 +121,7 @@ const MarkdownPreviewExample = () => {
       start = end
     }
 
+    console.log("ranges")
     console.log(ranges)
     return ranges
   }, [])

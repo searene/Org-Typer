@@ -1,3 +1,4 @@
+import { InlineStyle } from "../../style/InlineStyle";
 import AbstractOrgNode from "./AbstractOrgNode";
 import OrgNode from "./OrgNode";
 import OrgNodeType from "./OrgNodeType";
@@ -6,7 +7,7 @@ export default class ItalicOrgNode extends AbstractOrgNode {
 
     type = OrgNodeType.Italic;
     children: OrgNode[] = [];
-    parent = undefined;
+    parent: OrgNode | undefined = undefined;
 
     constructor(public start: number, public end: number, child?: OrgNode) {
         super();
@@ -19,5 +20,11 @@ export default class ItalicOrgNode extends AbstractOrgNode {
     }
     getEndIndexOfChildren(): number {
         return this.end - 1;
+    }
+    getInlineStyles(): Set<InlineStyle> {
+        const res: Set<InlineStyle> = new Set();
+        this.parent?.getInlineStyles().forEach(s => res.add(s));
+        res.add(InlineStyle.Italic);
+        return res;
     }
 }
