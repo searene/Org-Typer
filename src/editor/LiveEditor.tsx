@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
-import { BaseEditor, createEditor, Descendant, Editor, NodeEntry, Transforms, Text, Node } from 'slate'
+import { BaseEditor, createEditor, Descendant, Editor, NodeEntry, Transforms, Text, Node, Path } from 'slate'
 import { Editable, ReactEditor, RenderLeafProps, Slate, withReact } from 'slate-react'
 import { HistoryEditor } from 'slate-history'
 import CustomText from "./CustomText"
@@ -8,6 +8,8 @@ import { ParagraphElement, ParagraphElementType } from "./elements/ParagraphElem
 import { CodeElement, CodeElementType } from "./elements/CodeElement"
 import OrgParser from "../parser/OrgParser"
 import { Leaf, CustomLeafProps } from "./Leaf"
+import OrgNode from "../parser/node/OrgNode"
+import { InlineStyle } from "../style/InlineStyle"
 
 declare module 'slate' {
   interface CustomTypes {
@@ -28,6 +30,19 @@ export default function LiveEditor() {
     return <Leaf {...props} />;
   }, []);
 
+  const pushRanges = (node: OrgNode, path: Path, ranges: any[]) => {
+    for (const orgNode of node.children) {
+      ranges.push({
+        type: orgNode.type,
+        anchor: { path, offset: orgNode.start },
+        focus: { path, offset: orgNode.end },
+      });
+      for (const child of orgNode.children) {
+        pushRanges(child, path, ranges);
+      }
+    }
+  }
+
   const decorate = useCallback((nodeEntry: NodeEntry) => {
     const node = nodeEntry[0];
     const path = nodeEntry[1];
@@ -36,16 +51,11 @@ export default function LiveEditor() {
       return []
     }
     
-    const orgParser = new OrgParser(node.text);
-    const orgNodes = orgParser.parse()
-    const ranges = []
-    for (const orgNode of orgNodes) {
-      ranges.push({
-        type: orgNode.type,
-        anchor: { path, offset: orgNode.start },
-        focus: { path, offset: orgNode.end },
-      })
-    }
+    const orgParser = new OrgParser();
+    const rootNode = orgParser.parse(node.text)
+    const ranges: any[] = []
+    pushRanges(rootNode, path, ranges);
+    console.log(ranges);
     return ranges;
   }, []);
 

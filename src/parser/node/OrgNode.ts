@@ -12,7 +12,13 @@ export default interface OrgNode {
 
     children: OrgNode[];
 
+    parent: OrgNode | undefined;
+
     getStartIndexOfChildren(): number;
 
     getEndIndexOfChildren(): number;
+
+    addChild(child: OrgNode): void;
+
+    addChildren(children: OrgNode[]): void;
 }

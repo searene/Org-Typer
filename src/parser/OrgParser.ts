@@ -30,15 +30,15 @@ export default class OrgParser {
                 pos++;
             } else {
                 if (textRange.isNotEmpty()) {
-                    parent.children.push(new TextOrgNode(textRange.start!, textRange.end!));
+                    parent.addChild(new TextOrgNode(textRange.start!, textRange.end!));
                     textRange.setEmpty();
                 }
-                parent.children.push(noneTextOrgNode);
+                parent.addChild(noneTextOrgNode);
                 pos = noneTextOrgNode.end;
             }
         }
         if (textRange.isNotEmpty()) {
-            parent.children.push(new TextOrgNode(textRange.start!, textRange.end!));
+            parent.addChild(new TextOrgNode(textRange.start!, textRange.end!));
         }
     }
 
@@ -47,14 +47,14 @@ export default class OrgParser {
         if (c == '*') {
             const endOfAsterisk = this.getPosOfCharInCurrentLine('*', text, start + 1, end);
             if (endOfAsterisk != undefined) {
-                const boldOrgNode = new BoldOrgNode(start, endOfAsterisk + 1, undefined);
+                const boldOrgNode = new BoldOrgNode(start, endOfAsterisk + 1);
                 this.parseInlineChildren(text, boldOrgNode, start + 1, endOfAsterisk);
                 return boldOrgNode;
             }
         } else if (c == '/') {
             const endOfSlash = this.getPosOfCharInCurrentLine('/', text, start + 1, end);
             if (endOfSlash != undefined) {
-                const italicOrgNode = new ItalicOrgNode(start, endOfSlash + 1, undefined);
+                const italicOrgNode = new ItalicOrgNode(start, endOfSlash + 1);
                 this.parseInlineChildren(text, italicOrgNode, start + 1, endOfSlash);
                 return italicOrgNode;
             }

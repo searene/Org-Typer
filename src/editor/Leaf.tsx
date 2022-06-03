@@ -15,6 +15,10 @@ export function Leaf(props: CustomLeafProps) {
             case undefined:
             case OrgNodeType.Text:
                 return <span {...props.attributes}>{props.children}</span>
+            case OrgNodeType.Bold:
+                return <b {...props.attributes}>{props.children}</b>
+            case OrgNodeType.Italic:
+                return <i {...props.attributes}>{props.children}</i>
             default:
                 throw new Error("Unsupported node type: " + props.leaf.type)
         }

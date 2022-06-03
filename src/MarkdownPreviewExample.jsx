@@ -88,8 +88,6 @@ const MarkdownPreviewExample = () => {
   const decorate = useCallback(([node, path]) => {
     const ranges = []
 
-    console.log("path")
-    console.log(path)
     if (!Text.isText(node)) {
       return ranges
     }
@@ -104,9 +102,7 @@ const MarkdownPreviewExample = () => {
       }
     }
 
-    console.log("text: " +  node.text)
     const tokens = Prism.tokenize(node.text, Prism.languages.markdown)
-    console.log(tokens);
     
     let start = 0
 
@@ -125,6 +121,7 @@ const MarkdownPreviewExample = () => {
       start = end
     }
 
+    console.log(ranges)
     return ranges
   }, [])
 

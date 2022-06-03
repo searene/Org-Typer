@@ -1,14 +1,20 @@
+import AbstractOrgNode from "./AbstractOrgNode";
 import OrgNode from "./OrgNode";
 import OrgNodeType from "./OrgNodeType";
 
-export default class BoldOrgNode implements OrgNode {
+export default class BoldOrgNode extends AbstractOrgNode {
 
     type = OrgNodeType.Bold;
-    children: OrgNode[];
+    children: OrgNode[] = [];
+    parent: OrgNode | undefined = undefined;
 
-    constructor(public start: number, public end: number, child: OrgNode | undefined) {
-        this.children = child == undefined ? [] : [child];
+    constructor(public start: number, public end: number, child?: OrgNode) {
+        super();
+        if (child != undefined) {
+            this.addChild(child);
+        }
     }
+
     getStartIndexOfChildren(): number {
         return this.start + 1;
     }
