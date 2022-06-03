@@ -3,6 +3,7 @@ enum OrgNodeType {
     Text,
     Bold,
     Italic,
+    Underscore,
     Heading,
     Paragraph
 }

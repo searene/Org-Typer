@@ -3,6 +3,7 @@ import DocumentOrgNode from "./node/DocumentOrgNode";
 import ItalicOrgNode from "./node/ItalicOrgNode";
 import OrgNode from "./node/OrgNode";
 import TextOrgNode from "./node/TextOrgNode";
+import UnderscoreOrgNode from "./node/UnderscoreOrgNode";
 import { TextRange } from "./TextRange";
 
 export default class OrgParser { 
@@ -57,6 +58,13 @@ export default class OrgParser {
                 const italicOrgNode = new ItalicOrgNode(start, endOfSlash + 1);
                 this.parseInlineChildren(text, italicOrgNode, start + 1, endOfSlash);
                 return italicOrgNode;
+            }
+        } else if (c == '_') {
+            const endOfUnderscore = this.getPosOfCharInCurrentLine('_', text, start + 1, end);
+            if (endOfUnderscore != undefined) {
+                const underscoreOrgNode = new UnderscoreOrgNode(start, endOfUnderscore + 1);
+                this.parseInlineChildren(text, underscoreOrgNode, start + 1, endOfUnderscore);
+                return underscoreOrgNode;
             }
         }
         return undefined;

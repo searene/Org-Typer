@@ -21,6 +21,7 @@ export function Leaf(props: CustomLeafProps) {
                 className={css`
                     font-weight: ${props.leaf.inlineStyles?.has(InlineStyle.Bold) && 'bold'};
                     font-style: ${props.leaf.inlineStyles?.has(InlineStyle.Italic) && 'italic'};
+                    text-decoration: ${props.leaf.inlineStyles?.has(InlineStyle.Underscore) && 'underline'};
                 `}
                 >{props.children}</span>
     }
