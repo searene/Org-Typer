@@ -5,6 +5,8 @@ import OrgNodeType from "./type/OrgNodeType";
 export default abstract class AbstractOrgNode implements OrgNode {
 
     ownInlineStyles: Map<string, string> = new Map();
+    prefix = "";
+    suffix = "";
 
     isLeaf(): boolean {
         return this.children.length == 0;
