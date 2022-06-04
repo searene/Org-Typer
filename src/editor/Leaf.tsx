@@ -14,16 +14,19 @@ export interface CustomLeafProps extends RenderLeafProps {
 export function Leaf(props: CustomLeafProps) {
 
     const renderSwitch = (props: CustomLeafProps) => {
-        console.log("props")
-        console.log(props)
-        return <span
-                {...props.attributes}
-                className={css`
-                    font-weight: ${props.leaf.inlineStyles?.has(InlineStyle.Bold) && 'bold'};
-                    font-style: ${props.leaf.inlineStyles?.has(InlineStyle.Italic) && 'italic'};
-                    text-decoration: ${props.leaf.inlineStyles?.has(InlineStyle.Underscore) && 'underline'};
-                `}
-                >{props.children}</span>
+        const styles = css`
+            font-weight: ${props.leaf.inlineStyles?.has(InlineStyle.Bold) && 'bold'};
+            font-style: ${props.leaf.inlineStyles?.has(InlineStyle.Italic) && 'italic'};
+            text-decoration: ${props.leaf.inlineStyles?.has(InlineStyle.Underscore) && 'underline'};
+        `;
+        if (props.leaf.type == OrgNodeType.Header) {
+            return <h1 {...props.attributes} className={styles}>{props.children}</h1>;
+        } else {
+            return <span
+                    {...props.attributes}
+                    className={styles}
+                    >{props.children}</span>
+        }
     }
 
     return (

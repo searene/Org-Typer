@@ -40,6 +40,9 @@ export default function LiveEditor() {
     
     const orgParser = new OrgParser();
     const rootNode = orgParser.parse(node.text)
+    console.log("after parse")
+    console.log(node.text)
+    console.log(rootNode)
     const ranges: CustomRange[] = RangeConverter.convertOrgNodeToRanges(rootNode, path);
     console.log(ranges);
     return ranges;

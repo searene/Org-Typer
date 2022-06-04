@@ -4,7 +4,7 @@ import OrgNodeType from "./type/OrgNodeType";
 
 export default class HeaderOrgNode extends AbstractOrgNode {
 
-    type = OrgNodeType.Bold;
+    type = OrgNodeType.Header;
     parent: OrgNode | undefined = undefined;
 
     constructor(public start: number, public end: number, public level: number, private whitespaceCount: number, public children: OrgNode[] = []) {

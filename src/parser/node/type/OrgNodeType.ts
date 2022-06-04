@@ -1,11 +1,11 @@
 enum OrgNodeType {
-    Document,
-    Text,
-    Bold,
-    Italic,
-    Underscore,
-    Heading,
-    Paragraph
+    Document = "Document",
+    Text = "Text",
+    Bold = "Bold",
+    Italic = "Italic",
+    Underscore = "Underscore",
+    Header = "Header",
+    Paragraph = "Paragraph",
 }
 
 export default OrgNodeType;

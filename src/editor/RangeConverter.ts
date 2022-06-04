@@ -14,6 +14,7 @@ export class RangeConverter {
             return [];
         }
         return [{
+            type: orgNode.type,
             inlineStyles: orgNode.getInlineStyles(),
             anchor: { path, offset: orgNode.start },
             focus: { path, offset: orgNode.end }
