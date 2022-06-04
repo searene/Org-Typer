@@ -2,8 +2,10 @@ import { css } from "@emotion/css";
 
 interface StyledSpanProps {
 
-    inheritedSlateAttributes: any;
-    inheritedSlateChildren: React.ReactNode;
+    inheritedSlateAttributes: {
+        'data-slate-leaf': true;
+    };
+    children: React.ReactNode;
     bold: boolean;
     italic: boolean;
     underscore: boolean;
@@ -17,7 +19,7 @@ export function StyledSpan(props: StyledSpanProps) {
             font-style: ${props.italic && 'italic'};
             text-decoration: ${props.underscore && 'underline'};
         `}>
-            {props.inheritedSlateChildren}
+            {props.children}
         </span>
     )
 }

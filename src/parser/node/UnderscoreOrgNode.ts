@@ -1,3 +1,4 @@
+import { InlineStyle } from "../../style/InlineStyle";
 import { InlineStyleGenerator } from "../../style/InlineStyleGenerator";
 import AbstractOrgNode from "./AbstractOrgNode";
 import OrgNode from "./OrgNode";
@@ -5,7 +6,7 @@ import OrgNodeType from "./type/OrgNodeType";
 
 export default class UnderscoreOrgNode extends AbstractOrgNode {
 
-    ownInlineStyles: Map<string, string> = new Map([InlineStyleGenerator.getUnderscoreInlineStyle()])
+    ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Underscore])
     type = OrgNodeType.Underscore;
     children: OrgNode[] = [];
     parent: OrgNode | undefined = undefined;

@@ -4,5 +4,5 @@ import { InlineStyle } from "../style/InlineStyle";
 
 export type CustomRange = Range & {
     type: OrgNodeType;
-    inlineStyles: Map<string, string>;
+    inlineStyles: Set<InlineStyle>;
 }
