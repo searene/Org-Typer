@@ -1,10 +1,11 @@
-import { InlineStyle } from "../../style/InlineStyle";
+import { InlineStyleGenerator } from "../../style/InlineStyleGenerator";
 import AbstractOrgNode from "./AbstractOrgNode";
 import OrgNode from "./OrgNode";
 import OrgNodeType from "./type/OrgNodeType";
 
 export default class UnderscoreOrgNode extends AbstractOrgNode {
 
+    ownInlineStyles: Map<string, string> = new Map([InlineStyleGenerator.getUnderscoreInlineStyle()])
     type = OrgNodeType.Underscore;
     children: OrgNode[] = [];
     parent: OrgNode | undefined = undefined;
@@ -22,9 +23,9 @@ export default class UnderscoreOrgNode extends AbstractOrgNode {
     getEndIndexOfChildren(): number {
         return this.end - 1;
     }
-    getInlineStyles(): Set<InlineStyle> {
+    getInlineStyle(): Set<InlineStyle> {
         const res: Set<InlineStyle> = new Set();
-        this.parent?.getInlineStyles().forEach(s => res.add(s));
+        this.parent?.getInlineStyle().forEach(s => res.add(s));
         res.add(InlineStyle.Underscore);
         return res;
     }

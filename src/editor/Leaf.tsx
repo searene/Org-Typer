@@ -6,19 +6,26 @@ import { InlineStyle } from "../style/InlineStyle";
 export interface CustomLeafProps extends RenderLeafProps {
     leaf: {
         text: string,
-        inlineStyles: Set<InlineStyle> | undefined,
+        inlineStyles: Map<string, string> | undefined,
         type: OrgNodeType,
     }
 }
 
 export function Leaf(props: CustomLeafProps) {
 
+    const getStyles = (inlineStyles: Map<string, string> | undefined) => {
+        if (inlineStyles === undefined) {
+            return css``;
+        }
+        const styleStatements = [];
+        for (const [key, value] of inlineStyles) {
+            styleStatements.push(`${key}: ${value};`);
+        }
+        return css`${styleStatements.join("\n")}`;
+    }
+
     const renderSwitch = (props: CustomLeafProps) => {
-        const styles = css`
-            font-weight: ${props.leaf.inlineStyles?.has(InlineStyle.Bold) && 'bold'};
-            font-style: ${props.leaf.inlineStyles?.has(InlineStyle.Italic) && 'italic'};
-            text-decoration: ${props.leaf.inlineStyles?.has(InlineStyle.Underscore) && 'underline'};
-        `;
+        const styles = getStyles(props.leaf.inlineStyles);
         if (props.leaf.type == OrgNodeType.Header) {
             return <h1 {...props.attributes} className={styles}>{props.children}</h1>;
         } else {

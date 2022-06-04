@@ -15,6 +15,8 @@ export default interface OrgNode {
 
     parent: OrgNode | undefined;
 
+    ownInlineStyles: Map<string, string>;
+
     getStartIndexOfChildren(): number;
 
     getEndIndexOfChildren(): number;
@@ -23,7 +25,7 @@ export default interface OrgNode {
 
     addChildren(children: OrgNode[]): void;
 
-    getInlineStyles(): Set<InlineStyle>;
+    getInlineStyles(): Map<string, string>;
 
     isLeaf() : boolean;
 }

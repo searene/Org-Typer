@@ -4,15 +4,17 @@ import OrgNodeType from "./type/OrgNodeType";
 
 export default abstract class AbstractOrgNode implements OrgNode {
 
+    ownInlineStyles: Map<string, string> = new Map();
+
     isLeaf(): boolean {
         return this.children.length == 0;
     }
 
-    getInlineStyles(): Set<InlineStyle> {
+    getInlineStyles(): Map<string, string> {
         if (this.parent == undefined) {
-            return new Set();
+            return this.ownInlineStyles;
         }
-        return this.parent!.getInlineStyles();
+        return new Map([...this.parent.getInlineStyles(), ...this.ownInlineStyles]);
     }
 
     addChildren(children: OrgNode[]): void {
