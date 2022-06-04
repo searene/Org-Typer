@@ -2,8 +2,8 @@ import { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import LiveEditor from './editor/LiveEditor'
-import MarkdownPreviewExample from './MarkdownPreviewExample'
-import CodeHighlightingExample from './CodeHighlightingExample'
+import { MarkdownPreviewExample } from './slate-examples/MarkdownPreviewExample'
+import { SlateExample } from './slate-examples/SlateExample'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -13,6 +13,7 @@ function App() {
       <LiveEditor />
       {/* <MarkdownPreviewExample/> */}
       {/* <CodeHighlightingExample/> */}
+      {/* <SlateExample /> */}
     </div>
   )
 }

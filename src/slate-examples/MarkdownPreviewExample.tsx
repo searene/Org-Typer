@@ -1,7 +1,7 @@
 import Prism from 'prismjs'
 import React, { useCallback, useMemo } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
-import { Text, createEditor } from 'slate'
+import { Text, Editor, createEditor, Transforms } from 'slate'
 import { withHistory } from 'slate-history'
 import { css } from '@emotion/css'
 
@@ -82,10 +82,11 @@ Prism.languages.markdown = Prism.languages.extend("markup", {}), Prism.languages
   }
 }), Prism.languages.markdown.bold.inside.url = Prism.util.clone(Prism.languages.markdown.url), Prism.languages.markdown.italic.inside.url = Prism.util.clone(Prism.languages.markdown.url), Prism.languages.markdown.bold.inside.italic = Prism.util.clone(Prism.languages.markdown.italic), Prism.languages.markdown.italic.inside.bold = Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
 
-const MarkdownPreviewExample = () => {
+export const MarkdownPreviewExample = () => {
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
   const decorate = useCallback(([node, path]) => {
+    console.log(path)
     const ranges = []
 
     if (!Text.isText(node)) {
@@ -121,8 +122,6 @@ const MarkdownPreviewExample = () => {
       start = end
     }
 
-    console.log("ranges")
-    console.log(ranges)
     return ranges
   }, [])
 
@@ -132,6 +131,19 @@ const MarkdownPreviewExample = () => {
         decorate={decorate}
         renderLeaf={renderLeaf}
         placeholder="Write some markdown..."
+        onKeyDown={event => {
+          if (event.key === '`' && event.ctrlKey) {
+            event.preventDefault()
+            const [match] = Editor.nodes(editor, {
+              match: n => n.type === 'code',
+            })
+            Transforms.setNodes(
+              editor,
+              { type: match ? 'paragraph' : 'code' },
+              { match: n => Editor.isBlock(editor, n) }
+            )
+          }
+        }}
       />
     </Slate>
   )
@@ -195,6 +207,12 @@ const initialValue = [
       },
     ],
   },
+  {
+    type: 'code',
+    children: [{
+      text: '',
+    }]
+  }
 ]
 
 export default MarkdownPreviewExample
