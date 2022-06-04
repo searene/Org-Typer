@@ -33,7 +33,6 @@ export default function LiveEditor() {
   const decorate = useCallback((nodeEntry: NodeEntry) => {
     const node = nodeEntry[0];
     const path = nodeEntry[1];
-    console.log(path)
 
     if (!Text.isText(node)) {
       return []
@@ -62,7 +61,6 @@ export default function LiveEditor() {
           margin: "50px",
         }}
         onKeyDown={event => {
-          console.log(editor);
         }}
       />
     </Slate>

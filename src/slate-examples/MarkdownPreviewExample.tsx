@@ -86,7 +86,6 @@ export const MarkdownPreviewExample = () => {
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
   const decorate = useCallback(([node, path]) => {
-    console.log(path)
     const ranges = []
 
     if (!Text.isText(node)) {

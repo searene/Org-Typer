@@ -38,7 +38,6 @@ export const SlateExample = () => {
       <Editable
         renderElement={renderElement}
         onKeyDown={event => {
-          console.log(editor);
           if (event.key === '`' && event.ctrlKey) {
             // Prevent the "`" from being inserted by default.
             event.preventDefault()
