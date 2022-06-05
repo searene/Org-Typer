@@ -26,7 +26,7 @@ export default class UnderscoreOrgNode extends AbstractOrgNode {
     }
     getInlineStyle(): Set<InlineStyle> {
         const res: Set<InlineStyle> = new Set();
-        this.parent?.getInlineStyle().forEach(s => res.add(s));
+        this.parent?.getInlineStyles().forEach(s => res.add(s));
         res.add(InlineStyle.Underscore);
         return res;
     }

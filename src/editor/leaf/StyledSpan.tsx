@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import OrgNode from "../../parser/node/OrgNode";
 
 interface StyledSpanProps {
 
@@ -6,19 +7,13 @@ interface StyledSpanProps {
         'data-slate-leaf': true;
     };
     children: React.ReactNode;
-    bold: boolean;
-    italic: boolean;
-    underscore: boolean;
+    orgNode: OrgNode;
 }
 
 export function StyledSpan(props: StyledSpanProps) {
 
     return (
-        <span {...props.inheritedSlateAttributes} className={css`
-            font-weight: ${props.bold && 'bold'};
-            font-style: ${props.italic && 'italic'};
-            text-decoration: ${props.underscore && 'underline'};
-        `}>
+        <span {...props.inheritedSlateAttributes}>
             {props.children}
         </span>
     )
