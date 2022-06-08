@@ -1,5 +1,4 @@
 import { RenderLeafProps } from "slate-react";
-import OrgNode from "../parser/node/OrgNode";
 import OrgNodeType from "../parser/node/type/OrgNodeType";
 import { InlineStyle } from "../style/InlineStyle";
 import { StyledSpan } from "./leaf/StyledSpan";
@@ -9,7 +8,6 @@ export interface CustomLeafProps extends RenderLeafProps {
         text: string,
         inlineStyles: Set<InlineStyle> | undefined,
         type: OrgNodeType,
-        orgNode: OrgNode;
     }
 }
 
@@ -17,7 +15,9 @@ export function Leaf(props: CustomLeafProps) {
 
     return (
         <StyledSpan inheritedSlateAttributes={props.attributes}
-                    orgNode={props.leaf.orgNode}>
+                    bold={props.leaf.inlineStyles?.has(InlineStyle.Bold) ?? false}
+                    italic={props.leaf.inlineStyles?.has(InlineStyle.Italic) ?? false}
+                    underscore={props.leaf.inlineStyles?.has(InlineStyle.Underscore) ?? false}>
             {props.children}
         </StyledSpan>
     )
