@@ -1,14 +1,16 @@
 import CustomText from "../CustomText"
 
-export type CodeElementType = {
-    type: 'code'
+export type CodeBlockElementType = {
+    type: 'codeBlock'
     children: CustomText[]
 }
 
-export const CodeElement = (props: any) => {
+export const CodeBlockElement = (props: any) => {
     return (
-      <pre {...props.attributes}>
-        <code>{props.children}</code>
-      </pre>
+      <div>
+        <pre {...props.attributes}>
+          <code>{props.children}</code>
+        </pre>
+      </div>
     )
 }

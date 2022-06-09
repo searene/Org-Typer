@@ -6,6 +6,7 @@ enum OrgNodeType {
     Underscore = "Underscore",
     Header = "Header",
     Paragraph = "Paragraph",
+    CodeBlock = "CodeBlock",
 }
 
 export default OrgNodeType;

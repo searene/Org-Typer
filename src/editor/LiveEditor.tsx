@@ -1,20 +1,22 @@
 import { useCallback, useMemo, useState } from "react"
-import { BaseEditor, createEditor, Descendant, NodeEntry, Text } from 'slate'
-import { Editable, ReactEditor, Slate, withReact } from 'slate-react'
+import { BaseEditor, createEditor, Descendant, Node, NodeEntry, Text, Transforms } from 'slate'
+import { Editable, ReactEditor, RenderElementProps, Slate, withReact } from 'slate-react'
 import { HistoryEditor } from 'slate-history'
 import CustomText from "./CustomText"
 import { HeadingElementType } from "./elements/HeadingElement"
-import { ParagraphElementType } from "./elements/ParagraphElement"
-import { CodeElementType } from "./elements/CodeElement"
+import { ParagraphElement, ParagraphElementType } from "./elements/ParagraphElement"
+import { CodeBlockElementType, CodeBlockElement } from "./elements/CodeElement"
 import OrgParser from "../parser/OrgParser"
 import { Leaf } from "./Leaf"
 import { CustomRange } from "./CustomRange"
 import { RangeConverter } from "./RangeConverter"
+import { BlockTransformChecker } from "../engine/BlockTransformChecker"
+import OrgNodeType from "../parser/node/type/OrgNodeType"
 
 declare module 'slate' {
   interface CustomTypes {
     Editor: BaseEditor & ReactEditor & HistoryEditor
-    Element: HeadingElementType | ParagraphElementType | CodeElementType
+    Element: HeadingElementType | ParagraphElementType | CodeBlockElementType
     Text: CustomText
   }
 }
@@ -47,11 +49,31 @@ export default function LiveEditor() {
 
   const editor = useMemo(() => withReact(createEditor()), [])
 
+  const getCurrentLineText = function(): string | undefined {
+    const node = Node.get(editor, editor.selection!.anchor!.path);
+    if (Text.isText(node)) {
+      return node.text;
+    } else {
+      return undefined;
+    }
+  };
+
+  const renderElement = (props: RenderElementProps): JSX.Element => {
+    if (props.element.type === 'paragraph') {
+      return <ParagraphElement {...props} />;
+    } else if (props.element.type === 'codeBlock') {
+      return <CodeBlockElement {...props} />;
+    } else {
+      throw new Error(`Unknown element type: ${props.element.type}`);
+    }
+  }
+
   return (
     <Slate editor={editor} value={editorValue} onChange={setEditorValue}>
       <Editable
         decorate={decorate}
         renderLeaf={renderLeaf}
+        renderElement={renderElement}
         placeholder="Write some org-mode..."
         style={{
           width: "100%",
@@ -62,6 +84,20 @@ export default function LiveEditor() {
           margin: "50px",
         }}
         onKeyDown={event => {
+          if (event.key === ' ') {
+            const line = getCurrentLineText();
+            if (line === undefined) {
+              return;
+            }
+            const orgNodeType = BlockTransformChecker.getBlockNodeType(line);
+            if (orgNodeType === undefined) {
+              return;
+            }
+            if (orgNodeType === OrgNodeType.CodeBlock) {
+              event.preventDefault();
+              Transforms.setNodes(editor, { type: 'codeBlock' })
+            }
+          }
         }}
       />
     </Slate>
