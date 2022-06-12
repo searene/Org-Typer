@@ -18,26 +18,31 @@ import { Portal } from "../portal/Portal";
 import { KeyUtils } from "../key/KeyUtils";
 import { TableCellElementType, TableElement, TableElementType, TableRowElementType } from "./elements/TableElement";
 import { TableUtils } from "./table/TableUtils";
+import { ImageUtils } from "./image/ImageUtils";
+import { ImageElement, ImageElementType } from "./elements/ImageElement";
 
 declare module 'slate' {
   interface CustomTypes {
     Editor: BaseEditor & ReactEditor & HistoryEditor
-    Element: HeadingElementType | ParagraphElementType | CodeBlockElementType | TableElementType | TableRowElementType | TableCellElementType
+    Element: HeadingElementType | ParagraphElementType | CodeBlockElementType | TableElementType | TableRowElementType | TableCellElementType | ImageElementType
     Text: CustomText
   }
 }
 
 type Command = {
   text: string,
-  value: 'insert-table' | 'insert-code-block',
+  value: 'insert-table' | 'insert-code-block' | 'insert-image',
 }
 
 const commands: Command[] = [{
-  text: "Insert a table",
+  text: "Table",
   value: "insert-table"
 }, {
-  text: "Insert a code block",
+  text: "Code Block",
   value: "insert-code-block"
+}, {
+  text: "Image",
+  value: "insert-image",
 }]
 
 export default function LiveEditor() {
@@ -86,6 +91,8 @@ export default function LiveEditor() {
       return <CodeBlockElement {...props} />;
     } else if (['table', 'tableRow', 'tableCell'].includes(props.element.type)) {
       return <TableElement {...props} />
+    } else if (props.element.type === 'image') {
+      return <ImageElement {...props} />
     } else {
       throw new Error(`Unknown element type: ${props.element.type}`);
     }
@@ -98,10 +105,6 @@ export default function LiveEditor() {
     }
     const [start] = Range.edges(selection)
     Transforms.delete(editor, { at: start, unit: "line", reverse: true });
-  }
-
-  const handleFunctionKeyPressed = (editor: Editor) => {
-
   }
 
   useEffect(() => {
@@ -141,6 +144,8 @@ export default function LiveEditor() {
         const command = commands[selectedCommandIndex].value;
         if (command === 'insert-table') {
           TableUtils.insertNewTable(editor)
+        } else if (command === 'insert-image') {
+          ImageUtils.insertImage(editor);
         }
         return true;
       } else if (event.key === 'Escape') {
