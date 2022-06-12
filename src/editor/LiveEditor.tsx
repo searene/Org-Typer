@@ -16,101 +16,107 @@ import { BlockTransformChecker } from "../engine/BlockTransformChecker"
 import TextNodeType from "../parser/node/type/TextNodeType"
 
 declare module 'slate' {
-  interface CustomTypes {
-    Editor: BaseEditor & ReactEditor & HistoryEditor
-    Element: HeadingElementType | ParagraphElementType | CodeBlockElementType
-    Text: CustomText
-  }
+    interface CustomTypes {
+        Editor: BaseEditor & ReactEditor & HistoryEditor
+        Element: HeadingElementType | ParagraphElementType | CodeBlockElementType
+        Text: CustomText
+    }
 }
 
 export default function LiveEditor() {
 
-  const [editorValue, setEditorValue] = useState<Descendant[]>([{
-    type: 'paragraph',
-    children: [{ text: '' }],
-  }])
+    const [editorValue, setEditorValue] = useState<Descendant[]>([{
+        type: 'paragraph',
+        children: [{ text: '' }],
+    }])
 
-  const renderLeaf = useCallback((props: any): JSX.Element => {
-    return <Leaf {...props} />;
-  }, []);
+    const renderLeaf = useCallback((props: any): JSX.Element => {
+        return <Leaf {...props} />;
+    }, []);
 
-  const decorate = useCallback((nodeEntry: NodeEntry) => {
-    const node = nodeEntry[0];
-    const path = nodeEntry[1];
+    const decorate = useCallback((nodeEntry: NodeEntry) => {
+        const node = nodeEntry[0];
+        const path = nodeEntry[1];
 
-    if (!Text.isText(node)) {
-      return []
+        if (!Text.isText(node)) {
+            return []
+        }
+
+        const orgParser = new TextParser();
+        const rootNode = orgParser.parse(node.text)
+        const ranges: CustomRange[] = RangeConverter.convertTextNodeToRanges(rootNode, path);
+        return ranges;
+    }, []);
+
+    const editor = useMemo(() => withReact(createEditor()), [])
+
+    const getCurrentLineText = function (): string | undefined {
+        const node = Node.get(editor, editor.selection!.anchor!.path);
+        if (Text.isText(node)) {
+            return node.text;
+        } else {
+            return undefined;
+        }
+    };
+
+    const renderElement = (props: RenderElementProps): JSX.Element => {
+        if (props.element.type === 'paragraph') {
+            return <ParagraphElement {...props} />;
+        } else if (props.element.type === 'codeBlock') {
+            return <CodeBlockElement {...props} />;
+        } else {
+            throw new Error(`Unknown element type: ${props.element.type}`);
+        }
     }
-    
-    const orgParser = new TextParser();
-    const rootNode = orgParser.parse(node.text)
-    const ranges: CustomRange[] = RangeConverter.convertTextNodeToRanges(rootNode, path);
-    return ranges;
-  }, []);
 
-  const editor = useMemo(() => withReact(createEditor()), [])
-
-  const getCurrentLineText = function(): string | undefined {
-    const node = Node.get(editor, editor.selection!.anchor!.path);
-    if (Text.isText(node)) {
-      return node.text;
-    } else {
-      return undefined;
+    const transformToCodeBlock = (editor: Editor) => {
+        const { selection } = editor;
+        if (!selection || !Range.isCollapsed(selection)) {
+            return;
+        }
+        const [start] = Range.edges(selection)
+        Transforms.delete(editor, { at: start, unit: "line", reverse: true });
     }
-  };
 
-  const renderElement = (props: RenderElementProps): JSX.Element => {
-    if (props.element.type === 'paragraph') {
-      return <ParagraphElement {...props} />;
-    } else if (props.element.type === 'codeBlock') {
-      return <CodeBlockElement {...props} />;
-    } else {
-      throw new Error(`Unknown element type: ${props.element.type}`);
+    const handleFunctionKeyPressed = (editor: Editor) => {
+        
     }
-  }
 
-  const transformToCodeBlock = (editor: Editor) => {
-    const { selection } = editor;
-    if (!selection || !Range.isCollapsed(selection)) {
-      return;
-    }
-    const [start] = Range.edges(selection)
-    Transforms.delete(editor, { at: start, unit: "line", reverse: true });
-  }
-
-  return (
-    <Slate editor={editor} value={editorValue} onChange={setEditorValue}>
-      <Editable
-        decorate={decorate}
-        renderLeaf={renderLeaf}
-        renderElement={renderElement}
-        placeholder="Write something..."
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          margin: "50px",
-        }}
-        onKeyDown={event => {
-          if (event.key === ' ') {
-            const line = getCurrentLineText();
-            if (line === undefined) {
-              return;
-            }
-            const textNodeType = BlockTransformChecker.getBlockNodeType(line);
-            if (textNodeType === undefined) {
-              return;
-            }
-            if (textNodeType === TextNodeType.CodeBlock) {
-              event.preventDefault();
-              transformToCodeBlock(editor);
-              Transforms.setNodes(editor, { type: 'codeBlock' })
-            }
-          }
-        }}
-      />
-    </Slate>
-  )
+    return (
+        <Slate editor={editor} value={editorValue} onChange={setEditorValue}>
+            <Editable
+                decorate={decorate}
+                renderLeaf={renderLeaf}
+                renderElement={renderElement}
+                placeholder="Write something..."
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    margin: "50px",
+                }}
+                onKeyDown={event => {
+                    if (event.ctrlKey && event.key === "/") {
+                        handleFunctionKeyPressed(editor);
+                    } else if (event.key === ' ') {
+                        const line = getCurrentLineText();
+                        if (line === undefined) {
+                            return;
+                        }
+                        const textNodeType = BlockTransformChecker.getBlockNodeType(line);
+                        if (textNodeType === undefined) {
+                            return;
+                        }
+                        if (textNodeType === TextNodeType.CodeBlock) {
+                            event.preventDefault();
+                            transformToCodeBlock(editor);
+                            Transforms.setNodes(editor, { type: 'codeBlock' })
+                        }
+                    }
+                }}
+            />
+        </Slate>
+    )
 }
