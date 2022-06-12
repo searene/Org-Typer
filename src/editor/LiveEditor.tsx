@@ -57,9 +57,7 @@ export default function LiveEditor() {
   }])
 
   const getFilteredCommand = () => {
-    const res = commands.filter(command => command.text.toLowerCase().includes(commandInput.toLowerCase()))
-    console.log(res)
-    return res
+    return commands.filter(command => command.text.toLowerCase().includes(commandInput.toLowerCase()))
   }
 
   const renderLeaf = useCallback((props: any): JSX.Element => {
@@ -130,9 +128,11 @@ export default function LiveEditor() {
 
   const tryConsumeKeyWithCommandList = (event: React.KeyboardEvent): boolean => {
     if (KeyUtils.isCtrlKey(event) && event.key === "/") {
-      setIsCommandListVisible(true)
-      setSelectedCommandIndex(0);
-      setCommandInput("")
+      if (!isCommandListVisible) {
+        setIsCommandListVisible(true)
+        setSelectedCommandIndex(0);
+        setCommandInput("")
+      }
       return true;
     }
     if (isCommandListVisible) {
@@ -157,6 +157,7 @@ export default function LiveEditor() {
         }
         return true;
       } else if (event.key === 'Escape') {
+        event.preventDefault()
         setIsCommandListVisible(false);
         return true;
       } else if (/^[a-zA-Z0-9]$/.test(event.key)) {
