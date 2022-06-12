@@ -4,7 +4,7 @@ import OrgNodeType from "./type/OrgNodeType";
 
 export default class DocumentOrgNode extends AbstractOrgNode {
 
-    type = OrgNodeType.Document;
+    nodeType = OrgNodeType.Document;
     parent = undefined;
 
     constructor(public start: number, public end: number, public children: OrgNode[]) {

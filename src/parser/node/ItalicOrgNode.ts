@@ -6,7 +6,7 @@ import OrgNodeType from "./type/OrgNodeType";
 export default class ItalicOrgNode extends AbstractOrgNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Italic]);
-    type = OrgNodeType.Italic;
+    nodeType = OrgNodeType.Italic;
     children: OrgNode[] = [];
     parent: OrgNode | undefined = undefined;
 

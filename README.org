@@ -1,10 +1,9 @@
 * Start development
 
 #+begin_src sh
-
 # Install dependencies
-yarn
+pnpm install
 
 # Start the dev server
-yarn run tauri dev
+pnpm run tauri dev
 #+end_src

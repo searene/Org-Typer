@@ -7,7 +7,7 @@ import OrgNodeType from "./type/OrgNodeType";
 export default class BoldOrgNode extends AbstractOrgNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Bold]);
-    type = OrgNodeType.Bold;
+    nodeType = OrgNodeType.Bold;
     children: OrgNode[] = [];
     parent: OrgNode | undefined = undefined;
 

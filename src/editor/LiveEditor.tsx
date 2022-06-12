@@ -1,11 +1,13 @@
 import { useCallback, useMemo, useState } from "react"
-import { BaseEditor, createEditor, Descendant, Node, NodeEntry, Text, Transforms } from 'slate'
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { BaseEditor, createEditor, Descendant, Editor, Node, NodeEntry, Text, Transforms } from 'slate'
 import { Editable, ReactEditor, RenderElementProps, Slate, withReact } from 'slate-react'
 import { HistoryEditor } from 'slate-history'
 import CustomText from "./CustomText"
 import { HeadingElementType } from "./elements/HeadingElement"
 import { ParagraphElement, ParagraphElementType } from "./elements/ParagraphElement"
-import { CodeBlockElementType, CodeBlockElement } from "./elements/CodeElement"
+import { CodeBlockElementType, CodeBlockElement } from "./elements/CodeBlockElement"
 import OrgParser from "../parser/OrgParser"
 import { Leaf } from "./Leaf"
 import { CustomRange } from "./CustomRange"
@@ -74,7 +76,7 @@ export default function LiveEditor() {
         decorate={decorate}
         renderLeaf={renderLeaf}
         renderElement={renderElement}
-        placeholder="Write some org-mode..."
+        placeholder="Write something..."
         style={{
           width: "100%",
           height: "100%",

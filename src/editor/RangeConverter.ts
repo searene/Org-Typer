@@ -12,7 +12,7 @@ export class RangeConverter {
             return [...childRanges, ...ownRanges];
         }
         const inlineStyles = orgNode.getInlineStyles();
-        if (orgNode.type == OrgNodeType.Text && inlineStyles.size == 0) {
+        if (orgNode.nodeType == OrgNodeType.Text && inlineStyles.size == 0) {
             return [];
         }
         return [RangeConverter.createCustomRange(orgNode, path)];
@@ -20,7 +20,7 @@ export class RangeConverter {
 
     private static createCustomRange(orgNode: OrgNode, path: Path): CustomRange {
         return {
-            type: orgNode.type,
+            type: orgNode.nodeType,
             inlineStyles: orgNode.getInlineStyles(),
             anchor: { path, offset: orgNode.start },
             focus: { path, offset: orgNode.end }

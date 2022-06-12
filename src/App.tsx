@@ -4,6 +4,7 @@ import './App.css'
 import LiveEditor from './editor/LiveEditor'
 import { MarkdownPreviewExample } from './slate-examples/MarkdownPreviewExample'
 import { SlateExample } from './slate-examples/SlateExample'
+import CodeMirrorTest from './editor/CodeMirrorTest'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -11,6 +12,7 @@ function App() {
   return (
     <div className="App">
       <LiveEditor />
+      {/* <CodeMirrorTest/> */}
       {/* <MarkdownPreviewExample/> */}
       {/* <CodeHighlightingExample/> */}
       {/* <SlateExample /> */}

@@ -7,7 +7,7 @@ import OrgNodeType from "./type/OrgNodeType";
 export default class UnderscoreOrgNode extends AbstractOrgNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Underscore])
-    type = OrgNodeType.Underscore;
+    nodeType = OrgNodeType.Underscore;
     children: OrgNode[] = [];
     parent: OrgNode | undefined = undefined;
 

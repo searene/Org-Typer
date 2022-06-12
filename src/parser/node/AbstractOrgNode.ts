@@ -1,5 +1,5 @@
 import { InlineStyle } from "../../style/InlineStyle";
-import OrgNode from "./OrgNode";
+import OrgNode, { TextType } from "./OrgNode";
 import OrgNodeType from "./type/OrgNodeType";
 
 export default abstract class AbstractOrgNode implements OrgNode {
@@ -7,6 +7,7 @@ export default abstract class AbstractOrgNode implements OrgNode {
     ownInlineStyles: Set<InlineStyle> = new Set();
     prefix = "";
     suffix = "";
+    textType: TextType = 'org-mode';
 
     isLeaf(): boolean {
         return this.children.length == 0;
@@ -30,7 +31,7 @@ export default abstract class AbstractOrgNode implements OrgNode {
         child.parent = this;
     }
 
-    abstract type: OrgNodeType;
+    abstract nodeType: OrgNodeType;
     abstract start: number;
     abstract end: number;
     abstract children: OrgNode[];

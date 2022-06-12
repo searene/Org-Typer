@@ -1,10 +1,13 @@
 import { InlineStyle } from "../../style/InlineStyle";
 import OrgNodeType from "./type/OrgNodeType";
 
+export type TextType = "org-mode" | "markdown";
+
 export default interface OrgNode {
 
-    type: OrgNodeType;
+    nodeType: OrgNodeType;
     start: number;
+    textType: TextType
 
     /**
      * End position, exclusive

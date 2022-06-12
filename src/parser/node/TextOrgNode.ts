@@ -4,7 +4,7 @@ import OrgNodeType from "./type/OrgNodeType";
 
 export default class TextOrgNode extends AbstractOrgNode {
 
-    type = OrgNodeType.Text;
+    nodeType = OrgNodeType.Text;
     children: OrgNode[] = [];
     parent: OrgNode | undefined = undefined;
 
