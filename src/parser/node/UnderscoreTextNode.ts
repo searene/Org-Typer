@@ -30,4 +30,14 @@ export default class UnderscoreTextNode extends AbstractTextNode {
         res.add(InlineStyle.Underscore);
         return res;
     }
+    getPrefix(): string {
+        if (this.textType === "org-mode") {
+            return "_"
+        } else {
+            throw new Error("Unknown text type");
+        }
+    }
+    getSuffix(): string {
+        return this.getPrefix();
+    }
 }

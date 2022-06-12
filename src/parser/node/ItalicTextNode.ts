@@ -28,4 +28,15 @@ export default class ItalicTextNode extends AbstractTextNode {
         res.add(InlineStyle.Italic);
         return res;
     }
+    getPrefix(): string {
+        if (this.textType === "org-mode") {
+            return "/";
+        } else {
+            throw new Error("Unknown text type");
+        }
+    }
+    getSuffix(): string {
+        return this.getPrefix();
+    }
+
 }

@@ -17,12 +17,13 @@ export default interface TextNode {
     children: TextNode[];
     parent: TextNode | undefined;
     ownInlineStyles: Set<InlineStyle>
-    prefix: string;
-    suffix: string;
     getStartIndexOfChildren(): number;
     getEndIndexOfChildren(): number;
     addChild(child: TextNode): void;
     addChildren(children: TextNode[]): void;
     getInlineStyles(): Set<InlineStyle>;
     isLeaf() : boolean;
+
+    getPrefix(): string;
+    getSuffix(): string;
 }

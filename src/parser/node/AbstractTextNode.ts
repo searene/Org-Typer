@@ -5,8 +5,6 @@ import TextNodeType from "./type/TextNodeType";
 export default abstract class AbstractTextNode implements TextNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set();
-    prefix = "";
-    suffix = "";
     textType: TextType = 'org-mode';
 
     isLeaf(): boolean {
@@ -38,4 +36,10 @@ export default abstract class AbstractTextNode implements TextNode {
     abstract parent: TextNode | undefined;
     abstract getStartIndexOfChildren(): number;
     abstract getEndIndexOfChildren(): number;
+    getPrefix() {
+        return "";
+    }
+    getSuffix() {
+        return "";
+    }
 }

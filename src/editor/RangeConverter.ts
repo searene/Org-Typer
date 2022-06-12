@@ -41,10 +41,10 @@ export class RangeConverter {
     }
 
     private static getPrefixRange(textNode: TextNode, path: Path): CustomRange | undefined {
-        return textNode.prefix === "" ? undefined : RangeConverter.createCustomRange(textNode, path);
+        return textNode.getPrefix() === "" ? undefined : RangeConverter.createCustomRange(textNode, path);
     }
 
     private static getSuffixRange(textNode: TextNode, path: Path): CustomRange | undefined {
-        return textNode.suffix === "" ? undefined : RangeConverter.createCustomRange(textNode, path);
+        return textNode.getSuffix() === "" ? undefined : RangeConverter.createCustomRange(textNode, path);
     }
 }

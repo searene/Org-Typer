@@ -17,7 +17,8 @@ export function Leaf(props: CustomLeafProps) {
         <StyledSpan inheritedSlateAttributes={props.attributes}
                     bold={props.leaf.inlineStyles?.has(InlineStyle.Bold) ?? false}
                     italic={props.leaf.inlineStyles?.has(InlineStyle.Italic) ?? false}
-                    underscore={props.leaf.inlineStyles?.has(InlineStyle.Underscore) ?? false}>
+                    underscore={props.leaf.inlineStyles?.has(InlineStyle.Underscore) ?? false}
+                    header={props.leaf.inlineStyles?.has(InlineStyle.Header) ?? false}>
             {props.children}
         </StyledSpan>
     )

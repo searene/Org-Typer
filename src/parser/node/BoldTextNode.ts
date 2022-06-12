@@ -5,7 +5,6 @@ import TextNode from "./TextNode";
 import TextNodeType from "./type/TextNodeType";
 
 export default class BoldTextNode extends AbstractTextNode {
-
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Bold]);
     nodeType = TextNodeType.Bold;
     children: TextNode[] = [];
@@ -24,4 +23,15 @@ export default class BoldTextNode extends AbstractTextNode {
     getEndIndexOfChildren(): number {
         return this.end - 1;
     }
+    getPrefix(): string {
+        if (this.textType === "org-mode") {
+            return "*";
+        } else {
+            throw new Error("Unknown text type");
+        }
+    }
+    getSuffix(): string {
+        return this.getPrefix();
+    }
+
 }

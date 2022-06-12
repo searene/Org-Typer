@@ -1,9 +1,11 @@
+import { InlineStyle } from "../../style/InlineStyle";
 import AbstractTextNode from "./AbstractTextNode";
 import TextNode from "./TextNode";
 import TextNodeType from "./type/TextNodeType";
 
 export default class HeaderTextNode extends AbstractTextNode {
 
+    ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Header]);
     nodeType = TextNodeType.Header;
     parent: TextNode | undefined = undefined;
 
@@ -19,5 +21,15 @@ export default class HeaderTextNode extends AbstractTextNode {
     }
     getEndIndexOfChildren(): number {
         return this.end;
+    }
+    getPrefix(): string {
+        if (this.textType === "org-mode") {
+            return "*".repeat(this.level) + " ";
+        } else {
+            throw new Error("Unknown text type");
+        }
+    }
+    getSuffix(): string {
+        return "";
     }
 }

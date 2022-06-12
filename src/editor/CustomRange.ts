@@ -5,6 +5,5 @@ import { InlineStyle } from "../style/InlineStyle";
 
 export type CustomRange = Range & {
     type: TextNodeType;
-    textNode: TextNode;
     inlineStyles: Set<InlineStyle>;
 }
