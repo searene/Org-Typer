@@ -80,7 +80,7 @@ export class TableUtils {
             return;
         }
         const [pos] = Range.edges(selection)
-        Transforms.setNodes(editor, {
+        Transforms.insertNodes(editor, {
             type: 'table',
             children: [
               {
