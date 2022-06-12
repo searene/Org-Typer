@@ -181,7 +181,7 @@ export default function LiveEditor() {
         decorate={decorate}
         renderLeaf={renderLeaf}
         renderElement={renderElement}
-        placeholder="Write something..."
+        placeholder="Press 'command + /' for commands"
         style={{
           width: "100%",
           height: "100%",
