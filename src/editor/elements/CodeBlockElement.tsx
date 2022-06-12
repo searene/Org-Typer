@@ -22,6 +22,7 @@ export const CodeBlockElement = (props: any) => {
       // </CodeMirror>
       <div contentEditable={true} {...props.attributes}
            suppressContentEditableWarning={true}
+           placeholder="Type code here..."
            style={{
              border: "1px solid black",
              marginLeft: "10px",
