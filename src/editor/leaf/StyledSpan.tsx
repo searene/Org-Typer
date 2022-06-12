@@ -14,10 +14,6 @@ interface StyledSpanProps {
 
 export function StyledSpan(props: StyledSpanProps) {
 
-    {
-        console.log(props)
-    }
-
     return (
         <span {...props.inheritedSlateAttributes} className={css`
             font-weight: ${(props.bold || props.header) && 'bold'};

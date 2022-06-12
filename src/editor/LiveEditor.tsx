@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
-import { BaseEditor, createEditor, Descendant, Editor, Node, NodeEntry, Text, Transforms } from 'slate'
+import { BaseEditor, createEditor, Descendant, Range, Editor, Node, NodeEntry, Text, Transforms } from 'slate'
 import { Editable, ReactEditor, RenderElementProps, Slate, withReact } from 'slate-react'
 import { HistoryEditor } from 'slate-history'
 import CustomText from "./CustomText"
@@ -45,7 +45,6 @@ export default function LiveEditor() {
     const orgParser = new TextParser();
     const rootNode = orgParser.parse(node.text)
     const ranges: CustomRange[] = RangeConverter.convertTextNodeToRanges(rootNode, path);
-    console.log(ranges)
     return ranges;
   }, []);
 
@@ -68,6 +67,15 @@ export default function LiveEditor() {
     } else {
       throw new Error(`Unknown element type: ${props.element.type}`);
     }
+  }
+
+  const transformToCodeBlock = (editor: Editor) => {
+    const { selection } = editor;
+    if (!selection || !Range.isCollapsed(selection)) {
+      return;
+    }
+    const [start] = Range.edges(selection)
+    Transforms.delete(editor, { at: start, unit: "line", reverse: true });
   }
 
   return (
@@ -97,6 +105,7 @@ export default function LiveEditor() {
             }
             if (textNodeType === TextNodeType.CodeBlock) {
               event.preventDefault();
+              transformToCodeBlock(editor);
               Transforms.setNodes(editor, { type: 'codeBlock' })
             }
           }

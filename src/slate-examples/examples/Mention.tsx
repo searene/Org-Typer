@@ -30,6 +30,9 @@ const MentionExample = () => {
 
   const onKeyDown = useCallback(
     event => {
+      const t: Range = target!;
+      const location: Location = t;
+      console.log(location);
       if (target) {
         switch (event.key) {
           case 'ArrowDown':

@@ -9,8 +9,8 @@ function App() {
 
   return (
     <div className="App">
-      {/* <LiveEditor /> */}
-      <MentionExample />
+      <LiveEditor />
+      {/* <MentionExample /> */}
       {/* <CodeMirrorTest/> */}
       {/* <MarkdownPreviewExample/> */}
       {/* <CodeHighlightingExample/> */}
