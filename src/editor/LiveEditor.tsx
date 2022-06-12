@@ -50,10 +50,17 @@ export default function LiveEditor() {
   const commandDivRef = useRef<HTMLDivElement | null>(null)
   const [selectedCommandIndex, setSelectedCommandIndex] = useState<number>(0);
   const [isCommandListVisible, setIsCommandListVisible] = useState<boolean>(false);
+  const [commandInput, setCommandInput] = useState("")
   const [editorValue, setEditorValue] = useState<Descendant[]>([{
     type: 'paragraph',
     children: [{ text: '' }],
   }])
+
+  const getFilteredCommand = () => {
+    const res = commands.filter(command => command.text.toLowerCase().includes(commandInput.toLowerCase()))
+    console.log(res)
+    return res
+  }
 
   const renderLeaf = useCallback((props: any): JSX.Element => {
     return <Leaf {...props} />;
@@ -125,6 +132,7 @@ export default function LiveEditor() {
     if (KeyUtils.isCtrlKey(event) && event.key === "/") {
       setIsCommandListVisible(true)
       setSelectedCommandIndex(0);
+      setCommandInput("")
       return true;
     }
     if (isCommandListVisible) {
@@ -150,6 +158,16 @@ export default function LiveEditor() {
         return true;
       } else if (event.key === 'Escape') {
         setIsCommandListVisible(false);
+        return true;
+      } else if (/^[a-zA-Z0-9]$/.test(event.key)) {
+        setCommandInput(commandInput + event.key);
+        return true;
+      } else if (event.key === 'Backspace') {
+        if (commandInput.length > 0) {
+          setCommandInput(commandInput.slice(0, -1));
+        } else {
+          setIsCommandListVisible(false)
+        }
         return true;
       }
     }
@@ -209,7 +227,7 @@ export default function LiveEditor() {
               borderRadius: '4px',
               boxShadow: '0 1px 5px rgba(0,0,0,.2)',
             }}>
-            {commands.map((command, i) => (
+            {getFilteredCommand().map((command, i) => (
               <div key={command.value}
                 style={{
                   padding: '1px 3px',
