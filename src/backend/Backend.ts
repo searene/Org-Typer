@@ -3,5 +3,7 @@ export interface Backend {
     /**
      * Choose an image file and return its absolute path.
      */
-    chooseImageFile(): Promise<string | undefined>;
+    chooseImageFile(): Promise<string | undefined>
+
+    convertLocalSrc(localFilePath: string): string
 }

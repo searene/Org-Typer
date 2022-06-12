@@ -23,4 +23,8 @@ export class TauriBackend implements Backend {
         // return await tauriInvoke('choose_img_file')
     }
 
+    convertLocalSrc(localFilePath: string): string {
+        return window.__TAURI__!.tauri.convertFileSrc(localFilePath)
+    }
+
 }
