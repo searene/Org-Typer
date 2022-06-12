@@ -8,12 +8,12 @@ import CustomText from "./CustomText"
 import { HeadingElementType } from "./elements/HeadingElement"
 import { ParagraphElement, ParagraphElementType } from "./elements/ParagraphElement"
 import { CodeBlockElementType, CodeBlockElement } from "./elements/CodeBlockElement"
-import OrgParser from "../parser/OrgParser"
+import TextParser from "../parser/TextParser"
 import { Leaf } from "./Leaf"
 import { CustomRange } from "./CustomRange"
 import { RangeConverter } from "./RangeConverter"
 import { BlockTransformChecker } from "../engine/BlockTransformChecker"
-import OrgNodeType from "../parser/node/type/OrgNodeType"
+import TextNodeType from "../parser/node/type/TextNodeType"
 
 declare module 'slate' {
   interface CustomTypes {
@@ -42,9 +42,9 @@ export default function LiveEditor() {
       return []
     }
     
-    const orgParser = new OrgParser();
+    const orgParser = new TextParser();
     const rootNode = orgParser.parse(node.text)
-    const ranges: CustomRange[] = RangeConverter.convertOrgNodeToRanges(rootNode, path);
+    const ranges: CustomRange[] = RangeConverter.convertTextNodeToRanges(rootNode, path);
     console.log(ranges)
     return ranges;
   }, []);
@@ -91,11 +91,11 @@ export default function LiveEditor() {
             if (line === undefined) {
               return;
             }
-            const orgNodeType = BlockTransformChecker.getBlockNodeType(line);
-            if (orgNodeType === undefined) {
+            const textNodeType = BlockTransformChecker.getBlockNodeType(line);
+            if (textNodeType === undefined) {
               return;
             }
-            if (orgNodeType === OrgNodeType.CodeBlock) {
+            if (textNodeType === TextNodeType.CodeBlock) {
               event.preventDefault();
               Transforms.setNodes(editor, { type: 'codeBlock' })
             }

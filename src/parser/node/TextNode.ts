@@ -1,11 +1,11 @@
 import { InlineStyle } from "../../style/InlineStyle";
-import OrgNodeType from "./type/OrgNodeType";
+import TextNodeType from "./type/TextNodeType";
 
 export type TextType = "org-mode" | "markdown";
 
-export default interface OrgNode {
+export default interface TextNode {
 
-    nodeType: OrgNodeType;
+    nodeType: TextNodeType;
     start: number;
     textType: TextType
 
@@ -14,15 +14,15 @@ export default interface OrgNode {
      */
     end: number;
 
-    children: OrgNode[];
-    parent: OrgNode | undefined;
+    children: TextNode[];
+    parent: TextNode | undefined;
     ownInlineStyles: Set<InlineStyle>
     prefix: string;
     suffix: string;
     getStartIndexOfChildren(): number;
     getEndIndexOfChildren(): number;
-    addChild(child: OrgNode): void;
-    addChildren(children: OrgNode[]): void;
+    addChild(child: TextNode): void;
+    addChildren(children: TextNode[]): void;
     getInlineStyles(): Set<InlineStyle>;
     isLeaf() : boolean;
 }

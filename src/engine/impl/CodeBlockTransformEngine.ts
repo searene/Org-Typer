@@ -1,11 +1,11 @@
-import OrgNodeType from "../../parser/node/type/OrgNodeType";
+import TextNodeType from "../../parser/node/type/TextNodeType";
 import { BlockTransformEngine } from "../BlockTransformEngine";
 
 export class CodeBlockTransformEngine implements BlockTransformEngine {
 
-    getBlockNodeType(line: string): OrgNodeType | undefined {
+    getBlockNodeType(line: string): TextNodeType | undefined {
         if (line.startsWith("code") || line.startsWith("#+begin_src")) {
-            return OrgNodeType.CodeBlock;
+            return TextNodeType.CodeBlock;
         }
         return undefined;
     }

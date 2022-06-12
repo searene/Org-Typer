@@ -1,8 +1,8 @@
 import { InlineStyle } from "../../style/InlineStyle";
-import OrgNode, { TextType } from "./OrgNode";
-import OrgNodeType from "./type/OrgNodeType";
+import TextNode, { TextType } from "./TextNode";
+import TextNodeType from "./type/TextNodeType";
 
-export default abstract class AbstractOrgNode implements OrgNode {
+export default abstract class AbstractTextNode implements TextNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set();
     prefix = "";
@@ -20,22 +20,22 @@ export default abstract class AbstractOrgNode implements OrgNode {
         return new Set([...this.parent.getInlineStyles(), ...this.ownInlineStyles]);
     }
 
-    addChildren(children: OrgNode[]): void {
+    addChildren(children: TextNode[]): void {
         for (const child of children) {
             this.addChild(child);
         }
     }
 
-    addChild(child: OrgNode){
+    addChild(child: TextNode){
         this.children.push(child);
         child.parent = this;
     }
 
-    abstract nodeType: OrgNodeType;
+    abstract nodeType: TextNodeType;
     abstract start: number;
     abstract end: number;
-    abstract children: OrgNode[];
-    abstract parent: OrgNode | undefined;
+    abstract children: TextNode[];
+    abstract parent: TextNode | undefined;
     abstract getStartIndexOfChildren(): number;
     abstract getEndIndexOfChildren(): number;
 }

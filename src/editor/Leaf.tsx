@@ -1,5 +1,5 @@
 import { RenderLeafProps } from "slate-react";
-import OrgNodeType from "../parser/node/type/OrgNodeType";
+import TextNodeType from "../parser/node/type/TextNodeType";
 import { InlineStyle } from "../style/InlineStyle";
 import { StyledSpan } from "./leaf/StyledSpan";
 
@@ -7,7 +7,7 @@ export interface CustomLeafProps extends RenderLeafProps {
     leaf: {
         text: string,
         inlineStyles: Set<InlineStyle> | undefined,
-        type: OrgNodeType,
+        type: TextNodeType,
     }
 }
 

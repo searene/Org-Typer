@@ -1,16 +1,16 @@
 import { InlineStyle } from "../../style/InlineStyle";
-import AbstractOrgNode from "./AbstractOrgNode";
-import OrgNode from "./OrgNode";
-import OrgNodeType from "./type/OrgNodeType";
+import AbstractTextNode from "./AbstractTextNode";
+import TextNode from "./TextNode";
+import TextNodeType from "./type/TextNodeType";
 
-export default class ItalicOrgNode extends AbstractOrgNode {
+export default class ItalicTextNode extends AbstractTextNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Italic]);
-    nodeType = OrgNodeType.Italic;
-    children: OrgNode[] = [];
-    parent: OrgNode | undefined = undefined;
+    nodeType = TextNodeType.Italic;
+    children: TextNode[] = [];
+    parent: TextNode | undefined = undefined;
 
-    constructor(public start: number, public end: number, child?: OrgNode) {
+    constructor(public start: number, public end: number, child?: TextNode) {
         super();
         if(child != undefined) {
             this.addChild(child);

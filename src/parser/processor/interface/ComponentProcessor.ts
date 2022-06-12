@@ -1,8 +1,8 @@
-import OrgNode from "../../node/OrgNode"
+import TextNode from "../../node/TextNode"
 import { OffsetRange } from "../../OffsetRange";
 
 export type ProcessedComponent = {
-    orgNode: OrgNode;
+    textNode: TextNode;
     childRange: OffsetRange;
 }
 
@@ -11,5 +11,5 @@ export type ProcessedComponent = {
  */
 export interface ShallowProcessor {
 
-    process(text: string, startPos: number, endPos: number): OrgNode | undefined;
+    process(text: string, startPos: number, endPos: number): TextNode | undefined;
 }

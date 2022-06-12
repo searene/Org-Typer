@@ -1,4 +1,4 @@
-enum OrgNodeType {
+enum TextNodeType {
     Document = "Document",
     Text = "Text",
     Bold = "Bold",
@@ -9,4 +9,4 @@ enum OrgNodeType {
     CodeBlock = "CodeBlock",
 }
 
-export default OrgNodeType;
+export default TextNodeType;

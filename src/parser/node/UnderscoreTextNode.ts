@@ -1,17 +1,17 @@
 import { InlineStyle } from "../../style/InlineStyle";
 import { InlineStyleGenerator } from "../../style/InlineStyleGenerator";
-import AbstractOrgNode from "./AbstractOrgNode";
-import OrgNode from "./OrgNode";
-import OrgNodeType from "./type/OrgNodeType";
+import AbstractTextNode from "./AbstractTextNode";
+import TextNode from "./TextNode";
+import TextNodeType from "./type/TextNodeType";
 
-export default class UnderscoreOrgNode extends AbstractOrgNode {
+export default class UnderscoreTextNode extends AbstractTextNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Underscore])
-    nodeType = OrgNodeType.Underscore;
-    children: OrgNode[] = [];
-    parent: OrgNode | undefined = undefined;
+    nodeType = TextNodeType.Underscore;
+    children: TextNode[] = [];
+    parent: TextNode | undefined = undefined;
 
-    constructor(public start: number, public end: number, child?: OrgNode) {
+    constructor(public start: number, public end: number, child?: TextNode) {
         super();
         if (child != undefined) {
             this.addChild(child);

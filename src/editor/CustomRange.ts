@@ -1,10 +1,10 @@
 import { Range } from "slate";
-import OrgNode from "../parser/node/OrgNode";
-import OrgNodeType from "../parser/node/type/OrgNodeType";
+import TextNode from "../parser/node/TextNode";
+import TextNodeType from "../parser/node/type/TextNodeType";
 import { InlineStyle } from "../style/InlineStyle";
 
 export type CustomRange = Range & {
-    type: OrgNodeType;
-    orgNode: OrgNode;
+    type: TextNodeType;
+    textNode: TextNode;
     inlineStyles: Set<InlineStyle>;
 }

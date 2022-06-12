@@ -1,6 +1,6 @@
-import OrgNodeType from "../parser/node/type/OrgNodeType";
+import TextNodeType from "../parser/node/type/TextNodeType";
 
 export interface BlockTransformEngine {
     
-    getBlockNodeType(line: string): OrgNodeType | undefined;
+    getBlockNodeType(line: string): TextNodeType | undefined;
 }

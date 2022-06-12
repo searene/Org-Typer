@@ -1,4 +1,4 @@
-import OrgNodeType from "../parser/node/type/OrgNodeType";
+import TextNodeType from "../parser/node/type/TextNodeType";
 import { BlockTransformEngine } from "./BlockTransformEngine";
 import { CodeBlockTransformEngine } from "./impl/CodeBlockTransformEngine";
 
@@ -8,11 +8,11 @@ export class BlockTransformChecker {
         new CodeBlockTransformEngine()
     ];
 
-    static getBlockNodeType(line: string): OrgNodeType | undefined {
+    static getBlockNodeType(line: string): TextNodeType | undefined {
         for (const engine of this.engines) {
-            const orgNodeType = engine.getBlockNodeType(line);
-            if (orgNodeType !== undefined) {
-                return orgNodeType
+            const textNodeType = engine.getBlockNodeType(line);
+            if (textNodeType !== undefined) {
+                return textNodeType
             }
         }
         return undefined;
