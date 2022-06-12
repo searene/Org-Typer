@@ -150,5 +150,6 @@ export class TableUtils {
           }, {
               at: pos
           });
+          Transforms.removeNodes(editor, { at: pos })
     }
 }
