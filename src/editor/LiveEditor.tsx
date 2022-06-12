@@ -3,7 +3,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { BaseEditor, createEditor, Descendant, Range, Editor, Node, NodeEntry, Text, Transforms } from 'slate'
 import { Editable, ReactEditor, RenderElementProps, Slate, withReact } from 'slate-react'
-import { HistoryEditor } from 'slate-history'
+import { HistoryEditor, withHistory } from 'slate-history'
 import CustomText from "./CustomText"
 import { HeadingElementType } from "./elements/HeadingElement"
 import { ParagraphElement, ParagraphElementType } from "./elements/ParagraphElement"
@@ -16,11 +16,13 @@ import { BlockTransformChecker } from "../engine/BlockTransformChecker"
 import TextNodeType from "../parser/node/type/TextNodeType"
 import { Portal } from "../portal/Portal";
 import { KeyUtils } from "../key/KeyUtils";
+import { TableCellElementType, TableElement, TableElementType, TableRowElementType } from "./elements/TableElement";
+import { TableUtils } from "./table/TableUtils";
 
 declare module 'slate' {
   interface CustomTypes {
     Editor: BaseEditor & ReactEditor & HistoryEditor
-    Element: HeadingElementType | ParagraphElementType | CodeBlockElementType
+    Element: HeadingElementType | ParagraphElementType | CodeBlockElementType | TableElementType | TableRowElementType | TableCellElementType
     Text: CustomText
   }
 }
@@ -66,7 +68,7 @@ export default function LiveEditor() {
     return ranges;
   }, []);
 
-  const editor = useMemo(() => withReact(createEditor()), [])
+  const editor = useMemo(() => TableUtils.withTable(withHistory(withReact(createEditor()))), [])
 
   const getCurrentLineText = function (): string | undefined {
     const node = Node.get(editor, editor.selection!.anchor!.path);
@@ -82,6 +84,8 @@ export default function LiveEditor() {
       return <ParagraphElement {...props} />;
     } else if (props.element.type === 'codeBlock') {
       return <CodeBlockElement {...props} />;
+    } else if (['table', 'tableRow', 'tableCell'].includes(props.element.type)) {
+      return <TableElement {...props} />
     } else {
       throw new Error(`Unknown element type: ${props.element.type}`);
     }
@@ -134,7 +138,10 @@ export default function LiveEditor() {
       } else if (event.key === "Tab" || event.key === "Enter") {
         event.preventDefault()
         setIsCommandListVisible(false)
-        console.log(commands[selectedCommandIndex].value)
+        const command = commands[selectedCommandIndex].value;
+        if (command === 'insert-table') {
+          TableUtils.insertNewTable(editor)
+        }
         return true;
       } else if (event.key === 'Escape') {
         setIsCommandListVisible(false);
