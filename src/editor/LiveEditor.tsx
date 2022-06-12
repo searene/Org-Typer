@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { BaseEditor, createEditor, Descendant, Range, Editor, Node, NodeEntry, Text, Transforms } from 'slate'
@@ -14,109 +14,202 @@ import { CustomRange } from "./CustomRange"
 import { RangeConverter } from "./RangeConverter"
 import { BlockTransformChecker } from "../engine/BlockTransformChecker"
 import TextNodeType from "../parser/node/type/TextNodeType"
+import { Portal } from "../portal/Portal";
+import { KeyUtils } from "../key/KeyUtils";
 
 declare module 'slate' {
-    interface CustomTypes {
-        Editor: BaseEditor & ReactEditor & HistoryEditor
-        Element: HeadingElementType | ParagraphElementType | CodeBlockElementType
-        Text: CustomText
-    }
+  interface CustomTypes {
+    Editor: BaseEditor & ReactEditor & HistoryEditor
+    Element: HeadingElementType | ParagraphElementType | CodeBlockElementType
+    Text: CustomText
+  }
 }
+
+type Command = {
+  text: string,
+  value: 'insert-table' | 'insert-code-block',
+}
+
+const commands: Command[] = [{
+  text: "Insert a table",
+  value: "insert-table"
+}, {
+  text: "Insert a code block",
+  value: "insert-code-block"
+}]
 
 export default function LiveEditor() {
 
-    const [editorValue, setEditorValue] = useState<Descendant[]>([{
-        type: 'paragraph',
-        children: [{ text: '' }],
-    }])
+  const commandDivRef = useRef<HTMLDivElement | null>(null)
+  const [selectedCommandIndex, setSelectedCommandIndex] = useState<number>(0);
+  const [isCommandListVisible, setIsCommandListVisible] = useState<boolean>(false);
+  const [editorValue, setEditorValue] = useState<Descendant[]>([{
+    type: 'paragraph',
+    children: [{ text: '' }],
+  }])
 
-    const renderLeaf = useCallback((props: any): JSX.Element => {
-        return <Leaf {...props} />;
-    }, []);
+  const renderLeaf = useCallback((props: any): JSX.Element => {
+    return <Leaf {...props} />;
+  }, []);
 
-    const decorate = useCallback((nodeEntry: NodeEntry) => {
-        const node = nodeEntry[0];
-        const path = nodeEntry[1];
+  const decorate = useCallback((nodeEntry: NodeEntry) => {
+    const node = nodeEntry[0];
+    const path = nodeEntry[1];
 
-        if (!Text.isText(node)) {
-            return []
-        }
-
-        const orgParser = new TextParser();
-        const rootNode = orgParser.parse(node.text)
-        const ranges: CustomRange[] = RangeConverter.convertTextNodeToRanges(rootNode, path);
-        return ranges;
-    }, []);
-
-    const editor = useMemo(() => withReact(createEditor()), [])
-
-    const getCurrentLineText = function (): string | undefined {
-        const node = Node.get(editor, editor.selection!.anchor!.path);
-        if (Text.isText(node)) {
-            return node.text;
-        } else {
-            return undefined;
-        }
-    };
-
-    const renderElement = (props: RenderElementProps): JSX.Element => {
-        if (props.element.type === 'paragraph') {
-            return <ParagraphElement {...props} />;
-        } else if (props.element.type === 'codeBlock') {
-            return <CodeBlockElement {...props} />;
-        } else {
-            throw new Error(`Unknown element type: ${props.element.type}`);
-        }
+    if (!Text.isText(node)) {
+      return []
     }
 
-    const transformToCodeBlock = (editor: Editor) => {
-        const { selection } = editor;
-        if (!selection || !Range.isCollapsed(selection)) {
+    const orgParser = new TextParser();
+    const rootNode = orgParser.parse(node.text)
+    const ranges: CustomRange[] = RangeConverter.convertTextNodeToRanges(rootNode, path);
+    return ranges;
+  }, []);
+
+  const editor = useMemo(() => withReact(createEditor()), [])
+
+  const getCurrentLineText = function (): string | undefined {
+    const node = Node.get(editor, editor.selection!.anchor!.path);
+    if (Text.isText(node)) {
+      return node.text;
+    } else {
+      return undefined;
+    }
+  };
+
+  const renderElement = (props: RenderElementProps): JSX.Element => {
+    if (props.element.type === 'paragraph') {
+      return <ParagraphElement {...props} />;
+    } else if (props.element.type === 'codeBlock') {
+      return <CodeBlockElement {...props} />;
+    } else {
+      throw new Error(`Unknown element type: ${props.element.type}`);
+    }
+  }
+
+  const transformToCodeBlock = (editor: Editor) => {
+    const { selection } = editor;
+    if (!selection || !Range.isCollapsed(selection)) {
+      return;
+    }
+    const [start] = Range.edges(selection)
+    Transforms.delete(editor, { at: start, unit: "line", reverse: true });
+  }
+
+  const handleFunctionKeyPressed = (editor: Editor) => {
+
+  }
+
+  useEffect(() => {
+    if (isCommandListVisible) {
+      const { selection } = editor;
+      if (!selection || !Range.isCollapsed(selection)) {
+        return;
+      }
+      const reactDOMRange = ReactEditor.toDOMRange(editor, selection);
+      const rect = reactDOMRange.getBoundingClientRect()
+      const current = commandDivRef.current!;
+      current.style.top = `${rect.top + window.pageYOffset + 24}px`
+      current.style.left = `${rect.left + window.pageXOffset}px`
+    }
+  }, [isCommandListVisible]);
+
+  const tryConsumeKeyWithCommandList = (event: React.KeyboardEvent): boolean => {
+    if (KeyUtils.isCtrlKey(event) && event.key === "/") {
+      setIsCommandListVisible(true)
+      setSelectedCommandIndex(0);
+      return true;
+    }
+    if (isCommandListVisible) {
+      if (event.key === "ArrowDown" || (event.ctrlKey && event.key === "n")) {
+        event.preventDefault();
+        const prevIndex = selectedCommandIndex >= commands.length - 1 ? 0 : selectedCommandIndex + 1;
+        setSelectedCommandIndex(prevIndex);
+        return true;
+      } else if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
+        event.preventDefault()
+        const nextIndex = selectedCommandIndex <= 0 ? commands.length - 1 : selectedCommandIndex - 1
+        setSelectedCommandIndex(nextIndex)
+        return true;
+      } else if (event.key === "Tab" || event.key === "Enter") {
+        event.preventDefault()
+        setIsCommandListVisible(false)
+        console.log(commands[selectedCommandIndex].value)
+        return true;
+      } else if (event.key === 'Escape') {
+        setIsCommandListVisible(false);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  return (
+    <Slate editor={editor} value={editorValue} onChange={setEditorValue}>
+      <Editable
+        decorate={decorate}
+        renderLeaf={renderLeaf}
+        renderElement={renderElement}
+        placeholder="Write something..."
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          margin: "50px",
+        }}
+        onKeyDown={event => {
+          const isKeyConsumedByCommandList = tryConsumeKeyWithCommandList(event);
+          if (isKeyConsumedByCommandList) {
             return;
-        }
-        const [start] = Range.edges(selection)
-        Transforms.delete(editor, { at: start, unit: "line", reverse: true });
-    }
-
-    const handleFunctionKeyPressed = (editor: Editor) => {
-        
-    }
-
-    return (
-        <Slate editor={editor} value={editorValue} onChange={setEditorValue}>
-            <Editable
-                decorate={decorate}
-                renderLeaf={renderLeaf}
-                renderElement={renderElement}
-                placeholder="Write something..."
+          }
+          if (KeyUtils.isCtrlKey(event) && event.key === "/") {
+            setIsCommandListVisible(true);
+          } else if (event.key === ' ') {
+            const line = getCurrentLineText();
+            if (line === undefined) {
+              return;
+            }
+            const textNodeType = BlockTransformChecker.getBlockNodeType(line);
+            if (textNodeType === undefined) {
+              return;
+            }
+            if (textNodeType === TextNodeType.CodeBlock) {
+              event.preventDefault();
+              transformToCodeBlock(editor);
+              Transforms.setNodes(editor, { type: 'codeBlock' })
+            }
+          }
+        }}
+      />
+      {isCommandListVisible &&
+        <Portal>
+          <div
+            ref={commandDivRef}
+            style={{
+              top: '-9999px',
+              left: '-9999px',
+              position: 'absolute',
+              zIndex: 1,
+              padding: '3px',
+              background: 'white',
+              borderRadius: '4px',
+              boxShadow: '0 1px 5px rgba(0,0,0,.2)',
+            }}>
+            {commands.map((command, i) => (
+              <div key={command.value}
                 style={{
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    margin: "50px",
-                }}
-                onKeyDown={event => {
-                    if (event.ctrlKey && event.key === "/") {
-                        handleFunctionKeyPressed(editor);
-                    } else if (event.key === ' ') {
-                        const line = getCurrentLineText();
-                        if (line === undefined) {
-                            return;
-                        }
-                        const textNodeType = BlockTransformChecker.getBlockNodeType(line);
-                        if (textNodeType === undefined) {
-                            return;
-                        }
-                        if (textNodeType === TextNodeType.CodeBlock) {
-                            event.preventDefault();
-                            transformToCodeBlock(editor);
-                            Transforms.setNodes(editor, { type: 'codeBlock' })
-                        }
-                    }
-                }}
-            />
-        </Slate>
-    )
+                  padding: '1px 3px',
+                  borderRadius: '3px',
+                  background: i === selectedCommandIndex ? '#B4D5FF' : 'transparent',
+                }}>
+                {command.text}
+              </div>
+            ))}
+          </div>
+        </Portal>
+      }
+    </Slate>
+  )
 }

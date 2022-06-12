@@ -8,6 +8,7 @@ import {
   withReact,
   useSelected,
   useFocused,
+  RenderElementProps,
 } from 'slate-react'
 
 import { Portal } from '../components'
@@ -163,7 +164,7 @@ const insertMention = (editor: Editor, character: string) => {
   Transforms.move(editor)
 }
 
-const Element = props => {
+const Element = (props: RenderElementProps) => {
   const { attributes, children, element } = props
   switch (element.type) {
     case 'mention':
@@ -173,7 +174,7 @@ const Element = props => {
   }
 }
 
-const Mention = ({ attributes, children, element }) => {
+const Mention = ({ attributes, children, element }: RenderElementProps) => {
   const selected = useSelected()
   const focused = useFocused()
   return (
