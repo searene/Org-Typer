@@ -54,7 +54,74 @@ export default function LiveEditor() {
   const [editorValue, setEditorValue] = useState<Descendant[]>([{
     type: 'paragraph',
     children: [{ text: '' }],
-  }])
+  }, {
+            type: 'table',
+            children: [
+              {
+                type: 'tableRow',
+                children: [
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                ],
+              },
+              {
+                type: 'tableRow',
+                children: [
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                ],
+              },
+              {
+                type: 'tableRow',
+                children: [
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                  {
+                    type: 'tableCell',
+                    children: [{ text: '' }],
+                  },
+                ],
+              },
+            ],
+          }])
 
   const getFilteredCommand = () => {
     return commands.filter(command => command.text.toLowerCase().includes(commandInput.toLowerCase()))
@@ -183,11 +250,7 @@ export default function LiveEditor() {
         renderElement={renderElement}
         placeholder="Press 'command + /' for commands"
         style={{
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          top: 0,
-          left: 0,
+          maxWidth: "90vw",
           margin: "50px",
         }}
         onKeyDown={event => {

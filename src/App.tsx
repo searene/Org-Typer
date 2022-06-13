@@ -4,15 +4,15 @@ import './App.css'
 import LiveEditor from './editor/LiveEditor'
 import MentionExample from './slate-examples/examples/Mention'
 import TablesExample from './slate-examples/examples/Tables'
-import EditableTable from './editable-table/EditableTable'
+import EditableTable from './editable-table-example/EditableTable'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <div className="App">
-      <EditableTable/>
-      {/* <LiveEditor /> */}
+      {/* <EditableTable/> */}
+      <LiveEditor />
       {/* <TablesExample/> */}
       {/* <MentionExample /> */}
       {/* <CodeMirrorTest/> */}
