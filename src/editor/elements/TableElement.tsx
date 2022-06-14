@@ -1,6 +1,8 @@
 import { useEffect } from "react"
 import { RenderElementProps } from "slate-react"
 import CustomText from "../CustomText"
+import { TableCellPosition } from "../leaf/TableCellPosition"
+import { TableUtils } from "../table/TableUtils"
 
 export type TableElementType = {
     type: 'table',
@@ -19,12 +21,32 @@ export type TableCellElementType = {
 
 export const TableElement = (props: RenderElementProps) => {
 
+    const TYPER_TD_CONFIG = "typer-td-config"
+
+    const getTopConfigureChild = (cell: HTMLTableCellElement): HTMLElement => {
+        for (const child of cell.children) {
+            if (child.className === TYPER_TD_CONFIG) {
+                return child as HTMLElement
+            }
+        }
+        throw new Error("Didn't find the top configure child")
+    }
+
     useEffect(() => {
-        const tableCells = document.getElementsByTagName<"td">("td")
-        for (const tableCell of tableCells) {
-            tableCell.addEventListener("mouseover", () => {
-                const rowIndex = tableCell.closest("tr")!.rowIndex
-                const cellIndex = tableCell.cellIndex
+        const tableCells = document.getElementsByTagName("td")
+        const positions = TableUtils.getPositions(tableCells)
+        for (const cell of tableCells) {
+            cell.addEventListener("mouseover", () => {
+                const pos = TableUtils.getPosition(cell)
+                const cellInFirstRow = positions.get(new TableCellPosition(0, pos.columnIndex).toString())!
+                const topConfigureTag = getTopConfigureChild(cellInFirstRow)
+                topConfigureTag.style.visibility = "visible"
+            })
+            cell.addEventListener("mouseleave", () => {
+                const pos = TableUtils.getPosition(cell)
+                const cellInFirstRow = positions.get(new TableCellPosition(0, pos.columnIndex).toString())!
+                const topConfigureTag = getTopConfigureChild(cellInFirstRow)
+                topConfigureTag.style.visibility = "hidden"
             })
         }
     });
@@ -51,7 +73,7 @@ export const TableElement = (props: RenderElementProps) => {
                 padding: "10px",
                 position: "relative",
             }}>
-                <button style={{
+                <button className={TYPER_TD_CONFIG} style={{
                     position: "absolute",
                     left: "50%",
                     top: "0",

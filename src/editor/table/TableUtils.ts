@@ -1,4 +1,5 @@
 import { Editor, Range, Element, Point, Transforms } from "slate";
+import { TableCellPosition } from "../leaf/TableCellPosition";
 
 export class TableUtils {
     static withTable(editor: Editor) {
@@ -83,73 +84,92 @@ export class TableUtils {
         Transforms.insertNodes(editor, {
             type: 'table',
             children: [
-              {
-                type: 'tableRow',
-                children: [
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                ],
-              },
-              {
-                type: 'tableRow',
-                children: [
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                ],
-              },
-              {
-                type: 'tableRow',
-                children: [
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                ],
-              },
+                {
+                    type: 'tableRow',
+                    children: [
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                    ],
+                },
+                {
+                    type: 'tableRow',
+                    children: [
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                    ],
+                },
+                {
+                    type: 'tableRow',
+                    children: [
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                        {
+                            type: 'tableCell',
+                            children: [{ text: '' }],
+                        },
+                    ],
+                },
             ],
-          }, {
-              at: pos
-          });
-          Transforms.removeNodes(editor, { at: pos })
+        }, {
+            at: pos
+        });
+        Transforms.removeNodes(editor, { at: pos })
+    }
+
+    static getPosition(tableCell: HTMLTableCellElement): TableCellPosition {
+        return new TableCellPosition(tableCell.closest("tr")!.rowIndex, tableCell.cellIndex)
+    }
+
+    /**
+     * We cannot use objects as map keys in javascript. If we do, javascript will check
+     * equality by reference instead of doing a deep comparison. That's ridiculous, but
+     * we have to accept it. I'll just use string as keys as a compromise.
+     */
+    static getPositions(cells: HTMLCollectionOf<HTMLTableCellElement>): Map<string, HTMLTableCellElement> {
+        const map = new Map()
+        for (const cell of cells) {
+            const pos = this.getPosition(cell)
+            const key = pos.toString()
+            map.set(key, cell)
+        }
+        return map
     }
 }
