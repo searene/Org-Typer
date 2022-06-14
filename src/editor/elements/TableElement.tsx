@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { RenderElementProps } from "slate-react"
 import CustomText from "../CustomText"
 
@@ -17,6 +18,16 @@ export type TableCellElementType = {
 }
 
 export const TableElement = (props: RenderElementProps) => {
+
+    useEffect(() => {
+        const tableCells = document.getElementsByTagName<"td">("td")
+        for (const tableCell of tableCells) {
+            tableCell.addEventListener("mouseover", () => {
+                const rowIndex = tableCell.closest("tr")!.rowIndex
+                const cellIndex = tableCell.cellIndex
+            })
+        }
+    });
 
     const getReactNode = (props: RenderElementProps): JSX.Element => {
         if (props.element.type === 'table') {
