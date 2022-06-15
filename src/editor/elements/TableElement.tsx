@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faGear } from '@fortawesome/free-solid-svg-icons'
+import { faGear, faArrowLeft, faArrowRight, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { MouseEventHandler, useEffect } from "react"
 import { RenderElementProps } from "slate-react"
 import CustomText from "../CustomText"
@@ -25,8 +25,8 @@ export type TableCellElementType = {
 
 export const TableElement = (props: RenderElementProps) => {
 
-  const TYPER_TD_CONFIG_TOP = "typer-td-config-top"
-  const TYPER_TD_CONFIG_LEFT = "typer-td-config-left"
+  const TYPER_TD_CONFIG_TOP = "typer-td-config typer-td-config-top"
+  const TYPER_TD_CONFIG_LEFT = "typer-td-config typer-td-config-left"
   const TOP_MENU_ID = "table-top-menu";
 
   const { show } = useContextMenu({ id: TOP_MENU_ID });
@@ -97,15 +97,18 @@ export const TableElement = (props: RenderElementProps) => {
             <tbody {...props.attributes}>{props.children}</tbody>
           </table>
           <Menu id={TOP_MENU_ID}>
-            <Item onClick={handleItemClick}>Item 1</Item>
-            <Item onClick={handleItemClick}>Item 2</Item>
-            <Separator />
-            <Item disabled>Disabled</Item>
-            <Separator />
-            <Submenu label="Submenu">
-              <Item onClick={handleItemClick}>Sub Item 1</Item>
-              <Item onClick={handleItemClick}>Sub Item 2</Item>
-            </Submenu>
+            <Item onClick={handleItemClick}>
+              <FontAwesomeIcon icon={faArrowLeft} style={{paddingRight: "10px"}}/>
+              Insert Left
+            </Item>
+            <Item onClick={handleItemClick}>
+              <FontAwesomeIcon icon={faArrowRight} style={{paddingRight: "10px"}}/>
+              Insert Right
+            </Item>
+            <Item onClick={handleItemClick}>
+              <FontAwesomeIcon icon={faTrash} style={{paddingRight: "10px"}}/>
+              Trash
+            </Item>
           </Menu>
         </div>
       )
