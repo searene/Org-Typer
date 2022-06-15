@@ -21,15 +21,25 @@ export type TableCellElementType = {
 
 export const TableElement = (props: RenderElementProps) => {
 
-    const TYPER_TD_CONFIG = "typer-td-config"
+    const TYPER_TD_CONFIG_TOP = "typer-td-config-top"
+
+    const TYPER_TD_CONFIG_LEFT = "typer-td-config-left"
 
     const getTopConfigureChild = (cell: HTMLTableCellElement): HTMLElement => {
         for (const child of cell.children) {
-            if (child.className === TYPER_TD_CONFIG) {
+            if (child.className === TYPER_TD_CONFIG_TOP) {
                 return child as HTMLElement
             }
         }
         throw new Error("Didn't find the top configure child")
+    }
+
+    const getLeftConfigureChild = (cell: HTMLTableCellElement): HTMLElement => {
+        for (const child of cell.children) {
+            if (child.className === TYPER_TD_CONFIG_LEFT) {
+                return child as HTMLElement
+            }
+        }
     }
 
     useEffect(() => {
@@ -39,14 +49,20 @@ export const TableElement = (props: RenderElementProps) => {
             cell.addEventListener("mouseover", () => {
                 const pos = TableUtils.getPosition(cell)
                 const cellInFirstRow = positions.get(new TableCellPosition(0, pos.columnIndex).toString())!
+                const cellInFirstColumn = positions.get(new TableCellPosition(pos.rowIndex, 0).toString())!
                 const topConfigureTag = getTopConfigureChild(cellInFirstRow)
+                const leftConfigureTag = getLeftConfigureChild(cellInFirstColumn)
                 topConfigureTag.style.visibility = "visible"
+                leftConfigureTag.style.visibility = "visible"
             })
             cell.addEventListener("mouseleave", () => {
                 const pos = TableUtils.getPosition(cell)
                 const cellInFirstRow = positions.get(new TableCellPosition(0, pos.columnIndex).toString())!
+                const cellInFirstColumn = positions.get(new TableCellPosition(pos.rowIndex, 0).toString())!
                 const topConfigureTag = getTopConfigureChild(cellInFirstRow)
+                const leftConfigureTag = getLeftConfigureChild(cellInFirstColumn)
                 topConfigureTag.style.visibility = "hidden"
+                leftConfigureTag.style.visibility = "hidden"
             })
         }
     });
@@ -73,13 +89,18 @@ export const TableElement = (props: RenderElementProps) => {
                 padding: "10px",
                 position: "relative",
             }}>
-                <button className={TYPER_TD_CONFIG} style={{
+                <button className={TYPER_TD_CONFIG_TOP} style={{
                     position: "absolute",
                     left: "50%",
                     top: "0",
                     transform: "translate(-50%, -50%)",
-                    border: "1px solid black",
-                    textAlign: "right",
+                    visibility: "hidden",
+                }}>test</button>
+                <button className={TYPER_TD_CONFIG_LEFT} style={{
+                    position: "absolute",
+                    left : "0",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
                     visibility: "hidden",
                 }}>test</button>
                 <span>{props.children}</span>
