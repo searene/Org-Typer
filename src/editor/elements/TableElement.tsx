@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useEffect } from "react"
 import { RenderElementProps } from "slate-react"
 import CustomText from "../CustomText"
@@ -89,20 +91,34 @@ export const TableElement = (props: RenderElementProps) => {
                 padding: "10px",
                 position: "relative",
             }}>
-                <button className={TYPER_TD_CONFIG_TOP} style={{
+                <div contentEditable={false} className={TYPER_TD_CONFIG_TOP} style={{
                     position: "absolute",
                     left: "50%",
                     top: "0",
                     transform: "translate(-50%, -50%)",
+                    border: "1px dashed black",
+                    width: "50px",
+                    textAlign: "center",
                     visibility: "hidden",
-                }}>test</button>
-                <button className={TYPER_TD_CONFIG_LEFT} style={{
+                    backgroundColor: "white",
+                }}>
+                    <FontAwesomeIcon icon={faGear} />
+                </div>
+                <div className={TYPER_TD_CONFIG_LEFT} style={{
                     position: "absolute",
                     left : "0",
                     top: "50%",
                     transform: "translate(-50%, -50%)",
+                    border: "1px dashed black",
+                    margin: "auto",
                     visibility: "hidden",
-                }}>test</button>
+                    backgroundColor: "white",
+                }}>
+                    <FontAwesomeIcon icon={faGear} style={{
+                        paddingTop: "5px",
+                        paddingBottom: "5px",
+                    }}/>
+                </div>
                 <span>{props.children}</span>
             </td>
         } else {
