@@ -36,8 +36,6 @@ export const TableElement = (props: RenderElementProps) => {
   }
 
   function displayMenu(e: TriggerEvent) {
-    // put whatever custom logic you need
-    // you can even decide to not display the Menu
     show(e);
   }
 
@@ -96,6 +94,7 @@ export const TableElement = (props: RenderElementProps) => {
           }}>
             <tbody {...props.attributes}>{props.children}</tbody>
           </table>
+          {/* TODO We will have multiple Menus with the same id if we have multiple tables, need to fix it */}
           <Menu id={TOP_MENU_ID}>
             <Item onClick={handleItemClick}>
               <FontAwesomeIcon icon={faArrowLeft} style={{paddingRight: "10px"}}/>
