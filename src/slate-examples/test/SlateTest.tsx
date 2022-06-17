@@ -4,22 +4,6 @@ import { javascript } from '@codemirror/lang-javascript';
 import { BaseEditor, createEditor, Descendant, Range, Editor, Node, NodeEntry, Text, Transforms } from 'slate'
 import { Editable, ReactEditor, RenderElementProps, Slate, withReact } from 'slate-react'
 import { HistoryEditor, withHistory } from 'slate-history'
-import CustomText from "./CustomText"
-import { HeadingElementType } from "./elements/HeadingElement"
-import { ParagraphElement, ParagraphElementType } from "./elements/ParagraphElement"
-import { CodeBlockElementType, CodeBlockElement } from "./elements/CodeBlockElement"
-import TextParser from "../parser/TextParser"
-import { Leaf } from "./Leaf"
-import { CustomRange } from "./CustomRange"
-import { RangeConverter } from "./RangeConverter"
-import { BlockTransformChecker } from "../engine/BlockTransformChecker"
-import TextNodeType from "../parser/node/type/TextNodeType"
-import { Portal } from "../portal/Portal";
-import { KeyUtils } from "../key/KeyUtils";
-import { TableCellElementType, TableElement, TableElementType, TableRowElementType } from "./elements/TableElement";
-import { TableUtils } from "./table/TableUtils";
-import { ImageUtils } from "./image/ImageUtils";
-import { ImageElement, ImageElementType } from "./elements/ImageElement";
 
 declare module 'slate' {
   interface CustomTypes {
@@ -45,7 +29,7 @@ const commands: Command[] = [{
   value: "insert-image",
 }]
 
-export default function LiveEditor() {
+export function SlateTest() {
 
   const commandDivRef = useRef<HTMLDivElement | null>(null)
   const [selectedCommandIndex, setSelectedCommandIndex] = useState<number>(0);
@@ -56,97 +40,12 @@ export default function LiveEditor() {
     children: [{ text: 'ABC' }],
   }, {
     type: 'paragraph',
-    children: [{ text: 'XYZ' }],
-  }, {
-            type: 'table',
-            children: [
-              {
-                type: 'tableRow',
-                children: [
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                ],
-              },
-              {
-                type: 'tableRow',
-                children: [
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                ],
-              },
-              {
-                type: 'tableRow',
-                children: [
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                  {
-                    type: 'tableCell',
-                    children: [{ text: '' }],
-                  },
-                ],
-              },
-            ],
-          }])
+    children: [{ text: "CDE" }],
+  }])
 
   const getFilteredCommand = () => {
     return commands.filter(command => command.text.toLowerCase().includes(commandInput.toLowerCase()))
   }
-
-  const renderLeaf = useCallback((props: any): JSX.Element => {
-    return <Leaf {...props} />;
-  }, []);
-
-  const decorate = useCallback((nodeEntry: NodeEntry) => {
-    const node = nodeEntry[0];
-    const path = nodeEntry[1];
-
-    if (!Text.isText(node)) {
-      return []
-    }
-
-    const orgParser = new TextParser();
-    const rootNode = orgParser.parse(node.text)
-    const ranges: CustomRange[] = RangeConverter.convertTextNodeToRanges(rootNode, path);
-    return ranges;
-  }, []);
 
   const editor = useMemo(() => TableUtils.withTable(withHistory(withReact(createEditor()))), [])
 

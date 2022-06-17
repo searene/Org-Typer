@@ -1,12 +1,23 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGear, faArrowLeft, faArrowRight, faTrash } from '@fortawesome/free-solid-svg-icons'
-import { MouseEventHandler, useEffect } from "react"
-import { RenderElementProps } from "slate-react"
+import { MouseEventHandler, useEffect, useRef, useState } from "react"
+import { ReactEditor, RenderElementProps } from "slate-react"
 import CustomText from "../CustomText"
 import { TableCellPosition } from "../leaf/TableCellPosition"
-import { TableUtils } from "../table/TableUtils"
+import { TableLayout, TableUtils } from "../table/TableUtils"
 import { Menu, Item, Separator, Submenu, useContextMenu, TriggerEvent, ItemParams } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
+import { Editor, Path, Transforms, Node } from "slate"
+
+export enum HorizontalDirection {
+  Left,
+  Right
+}
+
+type ContextMenuProps = {
+  tableCellElement: HTMLTableCellElement,
+  tableCellNode: Node,
+}
 
 export type TableElementType = {
   type: 'table',
@@ -23,7 +34,17 @@ export type TableCellElementType = {
   children: CustomText[],
 }
 
-export const TableElement = (props: RenderElementProps) => {
+enum ContextMenuOperation {
+  InsertLeft = "InsertLeft",
+  InsertRight = "InsertRight",
+  TrashColumn = "TrashColumn",
+}
+
+export type TableElementProps = RenderElementProps & {
+  editor: Editor
+}
+
+export const TableElement = (props: TableElementProps) => {
 
   const TYPER_TD_CONFIG_TOP = "typer-td-config typer-td-config-top"
   const TYPER_TD_CONFIG_LEFT = "typer-td-config typer-td-config-left"
@@ -31,12 +52,15 @@ export const TableElement = (props: RenderElementProps) => {
 
   const { show } = useContextMenu({ id: TOP_MENU_ID });
 
-  function handleItemClick({ event, props, triggerEvent, data }: ItemParams) {
-    console.log(event, props, triggerEvent, data);
-  }
-
-  function displayMenu(e: TriggerEvent) {
-    show(e);
+  function handleItemClick(params: ItemParams, op: ContextMenuOperation) {
+    const contextMenuProps: ContextMenuProps = params.props
+    if (op === ContextMenuOperation.InsertLeft) {
+      insertColumn(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode, HorizontalDirection.Left)
+    } else if (op === ContextMenuOperation.InsertRight) {
+      insertColumn(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode, HorizontalDirection.Right)
+    } else {
+      throw new Error("Unknown operation: " + op)
+    }
   }
 
   const getTopConfigureChild = (cell: HTMLTableCellElement): HTMLElement => {
@@ -57,7 +81,27 @@ export const TableElement = (props: RenderElementProps) => {
     throw new Error("Didn't find the left configure child")
   }
 
+  const insertColumn = (currentTableCell: HTMLTableCellElement, editor: Editor, slateTableCellNode: Node, direction: HorizontalDirection) => {
+    const currentTableCellPos = TableUtils.getPosition(currentTableCell)
+    const tableLayout = TableUtils.getTableLayout(currentTableCell)
+    let cellPath = ReactEditor.findPath(editor, slateTableCellNode)
+    if (direction === HorizontalDirection.Right) {
+      cellPath = Path.next(cellPath)
+    }
+    for (let i = 0; i < tableLayout.rowCount; i++) {
+      Transforms.insertNodes(props.editor, {
+        type: 'tableCell',
+        children: [{ text: 'abc' }]
+      }, {
+        at: cellPath,
+      })
+      cellPath = Path.next(Path.parent(cellPath))
+      cellPath.push(currentTableCellPos.columnIndex + (direction === HorizontalDirection.Left ? 0 : 1))
+    }
+  }
+
   useEffect(() => {
+    // TODO What if we have multiple tables?
     const tableCells = document.getElementsByTagName("td")
     const positions = TableUtils.getPositions(tableCells)
     for (const cell of tableCells) {
@@ -82,7 +126,7 @@ export const TableElement = (props: RenderElementProps) => {
     }
   });
 
-  const getReactNode = (props: RenderElementProps): JSX.Element => {
+  const getReactNode = (props: TableElementProps): JSX.Element => {
     if (props.element.type === 'table') {
       return (
         <div style={{
@@ -95,16 +139,16 @@ export const TableElement = (props: RenderElementProps) => {
             <tbody {...props.attributes}>{props.children}</tbody>
           </table>
           {/* TODO We will have multiple Menus with the same id if we have multiple tables, need to fix it */}
-          <Menu id={TOP_MENU_ID}>
-            <Item onClick={handleItemClick}>
+          <Menu id={TOP_MENU_ID} contentEditable={false}>
+            <Item onClick={(params: ItemParams) => handleItemClick(params, ContextMenuOperation.InsertLeft)}>
               <FontAwesomeIcon icon={faArrowLeft} style={{paddingRight: "10px"}}/>
               Insert Left
             </Item>
-            <Item onClick={handleItemClick}>
+            <Item onClick={(params: ItemParams) => handleItemClick(params, ContextMenuOperation.InsertRight)}>
               <FontAwesomeIcon icon={faArrowRight} style={{paddingRight: "10px"}}/>
               Insert Right
             </Item>
-            <Item onClick={handleItemClick}>
+            <Item onClick={(params: ItemParams) => handleItemClick(params, ContextMenuOperation.TrashColumn)}>
               <FontAwesomeIcon icon={faTrash} style={{paddingRight: "10px"}}/>
               Trash
             </Item>
@@ -121,7 +165,13 @@ export const TableElement = (props: RenderElementProps) => {
       }}>
         <div contentEditable={false}
           className={TYPER_TD_CONFIG_TOP}
-          onClick={displayMenu}
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            const contextMenuProps: ContextMenuProps = {
+              tableCellElement: e.currentTarget.parentElement as HTMLTableCellElement,
+              tableCellNode: props.element,
+            }
+            show(e, { props: contextMenuProps })
+          }}
           style={{
             position: "absolute",
             left: "50%",
@@ -135,7 +185,7 @@ export const TableElement = (props: RenderElementProps) => {
           }}>
           <FontAwesomeIcon icon={faGear} />
         </div>
-        <div className={TYPER_TD_CONFIG_LEFT} style={{
+        <div contentEditable={false} className={TYPER_TD_CONFIG_LEFT} style={{
           position: "absolute",
           left: "0",
           top: "50%",

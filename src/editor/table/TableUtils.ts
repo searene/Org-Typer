@@ -1,5 +1,17 @@
-import { Editor, Range, Element, Point, Transforms } from "slate";
+import { Editor, Range, Node, Element, Point, Transforms, Path } from "slate";
+import { ReactEditor } from "slate-react";
+import { TableCellElement } from "../../slate-examples/examples/custom-types";
 import { TableCellPosition } from "../leaf/TableCellPosition";
+
+export type TableLayout = {
+  rowCount: number,
+  columnCount: number,
+}
+
+export type TablePosition = {
+    rowIndex: number
+    columnIndex: number
+}
 
 export class TableUtils {
     static withTable(editor: Editor) {
@@ -172,4 +184,46 @@ export class TableUtils {
         }
         return map
     }
+
+    static getTableLayout(td: HTMLTableCellElement): TableLayout {
+        const tableElement = this.getTableElement(td)
+        const tableRowElements = this.getTableRowElements(tableElement)
+        const tableCellElements = this.getTableCellElements(tableRowElements[0]);
+        return {
+            rowCount: tableRowElements.length,
+            columnCount: tableCellElements.length,
+        }
+    }
+
+    static getTableCellPos(tableCell: HTMLTableCellElement): TablePosition {
+        const row = tableCell.closest("tr")!
+        return {
+            rowIndex: row.rowIndex,
+            columnIndex: tableCell.cellIndex,
+        }
+    }
+
+    static getRowIndex(tableRow: HTMLTableRowElement, table: HTMLTableElement): number {
+        const rows = this.getTableRowElements(table)
+        return rows.indexOf(tableRow)
+    }
+
+    private static getTableCellElements(tableRow: HTMLTableRowElement): HTMLTableCellElement[] {
+        const cells = tableRow.querySelectorAll("td")
+        return Array.from(cells) as HTMLTableCellElement[]
+    }
+
+    private static getTableRowElements(table: HTMLTableElement): HTMLTableRowElement[] {
+        const rows = table.querySelectorAll("tr")
+        return Array.from(rows) as HTMLTableRowElement[]
+    }
+
+    private static getTableElement(td: HTMLTableCellElement): HTMLTableElement {
+        let parent = td.parentElement
+        while (parent!.tagName !== 'TABLE') {
+            parent = parent!.parentElement
+        }
+        return parent! as HTMLTableElement
+    }
+
 }
