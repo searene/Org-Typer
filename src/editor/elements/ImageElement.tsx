@@ -13,9 +13,12 @@ export const ImageElement = (props: RenderElementProps) => {
 
     const getImageSrc = (props: RenderElementProps): string => {
         const filePath = (props.element as ImageElementType).children[0].text
-        if (filePath.startsWith("file://")) {
+        if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
+            return filePath
+        }
+        if (filePath.startsWith("file:")) {
             const backend = BackendFactory.get()
-            return backend.convertLocalSrc(filePath.substring("file://".length))
+            return backend.convertLocalSrc(filePath.substring("file:".length))
         } else {
             return filePath
         }
@@ -23,7 +26,11 @@ export const ImageElement = (props: RenderElementProps) => {
 
     return (
         <div {...props.attributes}>
-            {props.children}
+            <span style={{
+                visibility: "hidden"
+            }}>
+                {props.children}
+            </span>
             <br/>
             <img src={getImageSrc(props)} />
         </div>
