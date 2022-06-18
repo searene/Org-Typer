@@ -55,6 +55,9 @@ export default function LiveEditor() {
     type: 'paragraph',
     children: [{ text: 'ABC' }],
   }, {
+    type: 'image',
+    children: [{ text: 'https://img2.baidu.com/it/u=1935495228,624152010&fm=253&fmt=auto&app=138&f=JPEG?w=667&h=500' }],
+  }, {
     type: 'paragraph',
     children: [{ text: 'XYZ' }],
   }, {

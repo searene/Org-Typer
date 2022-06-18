@@ -13,8 +13,12 @@ export const ImageElement = (props: RenderElementProps) => {
 
     const getImageSrc = (props: RenderElementProps): string => {
         const filePath = (props.element as ImageElementType).children[0].text
-        const backend = BackendFactory.get()
-        return backend.convertLocalSrc(filePath)
+        if (filePath.startsWith("file://")) {
+            const backend = BackendFactory.get()
+            return backend.convertLocalSrc(filePath.substring("file://".length))
+        } else {
+            return filePath
+        }
     }
 
     return (
