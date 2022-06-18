@@ -63,6 +63,7 @@ export const TableElement = (props: TableElementProps) => {
 
   const { show: showColumnMenu } = useContextMenu({ id: COLUMN_MENU_ID });
   const { show: showRowMenu } = useContextMenu({id: ROW_MENU_ID })
+  const tableRef = useRef<HTMLTableElement>(null)
 
   function handleItemClick(params: ItemParams, op: ContextMenuOperation) {
     const contextMenuProps: ContextMenuProps = params.props
@@ -134,8 +135,6 @@ export const TableElement = (props: TableElementProps) => {
   }
 
   const deleteRow = (currentTableCell: HTMLTableCellElement, editor: Editor, slateTableCellNode: Node) => {
-    const currentTableCellPos = TableUtils.getPosition(currentTableCell)
-    const tableLayout = TableUtils.getTableLayout(currentTableCell) 
     const cellPath = ReactEditor.findPath(editor, slateTableCellNode)
     const rowPath = Path.parent(cellPath)
     Transforms.delete(props.editor, {
@@ -199,7 +198,28 @@ export const TableElement = (props: TableElementProps) => {
         cell.removeEventListener("mouseleave", cellToMouseleaveEventListenerMap.get(cell)!)
       }
     }
-  });
+  })
+
+  useEffect(() => {
+    if (tableRef.current === null) {
+      return
+    }
+    const table = tableRef.current
+    const tableParent = table.parentElement as HTMLDivElement
+    const tableTopOptions = table.previousSibling as HTMLDivElement
+    const mouseoverEventListener = () => {
+      tableTopOptions.style.visibility = "visible"
+    }
+    const mouseleaveEventListener = () => {
+      tableTopOptions.style.visibility = "hidden"
+    }
+    tableParent.addEventListener("mouseover", mouseoverEventListener)
+    tableParent.addEventListener("mouseleave", mouseleaveEventListener)
+    return () => {
+      tableParent.removeEventListener("mouseover", mouseoverEventListener)
+      tableParent.removeEventListener("mouseleave", mouseleaveEventListener)
+    }
+  })
 
   const getReactNode = (props: TableElementProps): JSX.Element => {
     if (props.element.type === 'table') {
@@ -207,10 +227,29 @@ export const TableElement = (props: TableElementProps) => {
         <div style={{
           width: "100%",
         }}>
+          <div style={{
+              width: "100%",
+              backgroundColor: "#eeeeee",
+              padding: "10px",
+              boxSizing: "border-box",
+              visibility: "hidden",
+            }}
+            >
+            <FontAwesomeIcon title="Delete the table"
+              icon={faTrash} size="1x" className="hover-pointer" style={{
+              paddingLeft: "10px",
+              paddingRight: "10px",
+            }} onClick={() => {
+              Transforms.delete(props.editor, {
+                at: ReactEditor.findPath(props.editor, props.element),
+              })
+            }}/>
+          </div>
           <table style={{
             borderCollapse: 'collapse',
             width: "100%",
-          }}>
+          }}
+            ref={tableRef}>
             <tbody {...props.attributes}>{props.children}</tbody>
           </table>
           {/* TODO We will have multiple Menus with the same id if we have multiple tables, need to fix it */}
