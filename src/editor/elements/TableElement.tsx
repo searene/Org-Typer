@@ -4,10 +4,11 @@ import { MouseEventHandler, useEffect, useRef, useState } from "react"
 import { ReactEditor, RenderElementProps } from "slate-react"
 import CustomText from "../CustomText"
 import { TableCellPosition } from "../leaf/TableCellPosition"
-import { TableLayout, TableUtils } from "../table/TableUtils"
+import { TableLayout, TablePosition, TableUtils } from "../table/TableUtils"
 import { Menu, Item, Separator, Submenu, useContextMenu, TriggerEvent, ItemParams } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { Editor, Path, Transforms, Node } from "slate"
+import Cell from "../../editable-table-example/Cell"
 
 export enum HorizontalDirection {
   Left,
@@ -100,29 +101,46 @@ export const TableElement = (props: TableElementProps) => {
     }
   }
 
+  const cellMouseoverEventListener = (cell: HTMLTableCellElement, posToCellMap: Map<string, HTMLTableCellElement>) => {
+    const pos = TableUtils.getPosition(cell)
+    const cellInFirstRow = posToCellMap.get(new TableCellPosition(0, pos.columnIndex).toString())!
+    const cellInFirstColumn = posToCellMap.get(new TableCellPosition(pos.rowIndex, 0).toString())!
+    const topConfigureTag = getTopConfigureChild(cellInFirstRow)
+    const leftConfigureTag = getLeftConfigureChild(cellInFirstColumn)
+    topConfigureTag.style.visibility = "visible"
+    leftConfigureTag.style.visibility = "visible"
+  }
+
+  const cellMouseleaveEventListener = (cell: HTMLTableCellElement, posToCellMap: Map<string, HTMLTableCellElement>) => {
+    const pos = TableUtils.getPosition(cell)
+    const cellInFirstRow = posToCellMap.get(new TableCellPosition(0, pos.columnIndex).toString())!
+    const cellInFirstColumn = posToCellMap.get(new TableCellPosition(pos.rowIndex, 0).toString())!
+    const topConfigureTag = getTopConfigureChild(cellInFirstRow)
+    const leftConfigureTag = getLeftConfigureChild(cellInFirstColumn)
+    topConfigureTag.style.visibility = "hidden"
+    leftConfigureTag.style.visibility = "hidden"
+  }
+
   useEffect(() => {
     // TODO What if we have multiple tables?
     const tableCells = document.getElementsByTagName("td")
     const positions = TableUtils.getPositions(tableCells)
+    const cellToMouseoverEventListenerMap = new Map<HTMLTableCellElement, () => void>()
+    const cellToMouseleaveEventListenerMap = new Map<HTMLTableCellElement, () => void>()
     for (const cell of tableCells) {
-      cell.addEventListener("mouseover", () => {
-        const pos = TableUtils.getPosition(cell)
-        const cellInFirstRow = positions.get(new TableCellPosition(0, pos.columnIndex).toString())!
-        const cellInFirstColumn = positions.get(new TableCellPosition(pos.rowIndex, 0).toString())!
-        const topConfigureTag = getTopConfigureChild(cellInFirstRow)
-        const leftConfigureTag = getLeftConfigureChild(cellInFirstColumn)
-        topConfigureTag.style.visibility = "visible"
-        leftConfigureTag.style.visibility = "visible"
-      })
-      cell.addEventListener("mouseleave", () => {
-        const pos = TableUtils.getPosition(cell)
-        const cellInFirstRow = positions.get(new TableCellPosition(0, pos.columnIndex).toString())!
-        const cellInFirstColumn = positions.get(new TableCellPosition(pos.rowIndex, 0).toString())!
-        const topConfigureTag = getTopConfigureChild(cellInFirstRow)
-        const leftConfigureTag = getLeftConfigureChild(cellInFirstColumn)
-        topConfigureTag.style.visibility = "hidden"
-        leftConfigureTag.style.visibility = "hidden"
-      })
+      const mouseoverEventListener = () => cellMouseoverEventListener(cell, positions)
+      const mouseleaveEventListener = () => cellMouseleaveEventListener(cell, positions)
+      cell.addEventListener("mouseover", mouseoverEventListener)
+      cell.addEventListener("mouseleave", mouseleaveEventListener)
+      cellToMouseoverEventListenerMap.set(cell, mouseoverEventListener)
+      cellToMouseleaveEventListenerMap.set(cell, mouseleaveEventListener)
+    }
+    return () => {
+      for (const cell of tableCells) {
+        const mouseoverEventListner = cellToMouseoverEventListenerMap.get(cell)!
+        cell.removeEventListener("mouseover", cellToMouseoverEventListenerMap.get(cell)!)
+        cell.removeEventListener("mouseleave", cellToMouseleaveEventListenerMap.get(cell)!)
+      }
     }
   });
 
