@@ -76,6 +76,8 @@ export const TableElement = (props: TableElementProps) => {
       insertRow(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode, VerticalDirection.Up)
     } else if (op === ContextMenuOperation.InsertBelow) {
       insertRow(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode, VerticalDirection.Down)
+    } else if (op === ContextMenuOperation.TrashRow) {
+      deleteRow(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode)
     } else {
       throw new Error("Unknown operation: " + op)
     }
@@ -129,6 +131,16 @@ export const TableElement = (props: TableElementProps) => {
       cellPath = Path.next(Path.parent(cellPath))
       cellPath.push(currentTableCellPos.columnIndex)
     }
+  }
+
+  const deleteRow = (currentTableCell: HTMLTableCellElement, editor: Editor, slateTableCellNode: Node) => {
+    const currentTableCellPos = TableUtils.getPosition(currentTableCell)
+    const tableLayout = TableUtils.getTableLayout(currentTableCell) 
+    const cellPath = ReactEditor.findPath(editor, slateTableCellNode)
+    const rowPath = Path.parent(cellPath)
+    Transforms.delete(props.editor, {
+      at: rowPath,
+    })
   }
 
   const insertRow = (currentTableCell: HTMLTableCellElement, editor: Editor, slateTableCellNode: Node, direction: VerticalDirection) => {
