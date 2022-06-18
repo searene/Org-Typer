@@ -5,7 +5,7 @@ import { ReactEditor, RenderElementProps } from "slate-react"
 import CustomText from "../CustomText"
 import { TableCellPosition } from "../leaf/TableCellPosition"
 import { TableLayout, TablePosition, TableUtils } from "../table/TableUtils"
-import { Menu, Item, Separator, Submenu, useContextMenu, TriggerEvent, ItemParams } from "react-contexify";
+import { Menu, Item, Separator, Submenu, useContextMenu, TriggerEvent, ItemParams, contextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { Editor, Path, Transforms, Node } from "slate"
 import Cell from "../../editable-table-example/Cell"
@@ -70,6 +70,8 @@ export const TableElement = (props: TableElementProps) => {
       insertColumn(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode, HorizontalDirection.Left)
     } else if (op === ContextMenuOperation.InsertRight) {
       insertColumn(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode, HorizontalDirection.Right)
+    } else if (op === ContextMenuOperation.TrashColumn) {
+      deleteColumn(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode)
     } else if (op === ContextMenuOperation.InsertAbove) {
       insertRow(contextMenuProps.tableCellElement, props.editor, contextMenuProps.tableCellNode, VerticalDirection.Up)
     } else if (op === ContextMenuOperation.InsertBelow) {
@@ -113,6 +115,19 @@ export const TableElement = (props: TableElementProps) => {
       })
       cellPath = Path.next(Path.parent(cellPath))
       cellPath.push(currentTableCellPos.columnIndex + (direction === HorizontalDirection.Left ? 0 : 1))
+    }
+  }
+
+  const deleteColumn = (currentTableCell: HTMLTableCellElement, editor: Editor, slateTableCellNode: Node) => {
+    const currentTableCellPos = TableUtils.getPosition(currentTableCell)
+    const tableLayout = TableUtils.getTableLayout(currentTableCell) 
+    let cellPath = ReactEditor.findPath(editor, slateTableCellNode)
+    for (let i = 0; i < tableLayout.rowCount; i++) {
+      Transforms.delete(props.editor, {
+        at: cellPath,
+      })
+      cellPath = Path.next(Path.parent(cellPath))
+      cellPath.push(currentTableCellPos.columnIndex)
     }
   }
 
@@ -198,7 +213,7 @@ export const TableElement = (props: TableElementProps) => {
             </Item>
             <Item onClick={(params: ItemParams) => handleItemClick(params, ContextMenuOperation.TrashColumn)}>
               <FontAwesomeIcon icon={faTrash} style={{paddingRight: "10px"}}/>
-              Trash
+              Trash The Current Column
             </Item>
           </Menu>
           <Menu id={ROW_MENU_ID} contentEditable={false}>
