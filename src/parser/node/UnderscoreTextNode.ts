@@ -1,5 +1,4 @@
 import { InlineStyle } from "../../style/InlineStyle";
-import { InlineStyleGenerator } from "../../style/InlineStyleGenerator";
 import AbstractTextNode from "./AbstractTextNode";
 import TextNode from "./TextNode";
 import TextNodeType from "./type/TextNodeType";

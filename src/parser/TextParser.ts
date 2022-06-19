@@ -1,6 +1,5 @@
 import BoldTextNode from "./node/BoldTextNode";
 import DocumentTextNode from "./node/DocumentTextNode";
-import HeaderTextNode from "./node/HeaderTextNode";
 import ItalicTextNode from "./node/ItalicTextNode";
 import TextNode from "./node/TextNode";
 import PlainTextNode from "./node/PlainTextNode";
@@ -86,17 +85,6 @@ export default class TextParser {
             }
         }
         return undefined;
-    }
-    private tryGettingHeaderTextNode(text: string, start: number, end: number): HeaderTextNode | undefined {
-        if (!this.isLineStart(text, start)) {
-            return undefined;
-        }
-        const headerLevel = this.tryGettingHeaderLevel(text, start, end);
-        if (headerLevel == undefined) {
-            return undefined;
-        }
-    }
-    private tryGettingHeaderLevel(text: string, start: number, end: number): number | undefined {
     }
 
     private getPosOfCharInCurrentLine(char: string, text: string, start: number, end: number): number | undefined {

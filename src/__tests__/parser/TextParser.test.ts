@@ -69,4 +69,14 @@ describe("Test text parser", () => {
         ])
         TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
     })
+
+    it("can parse image from http", () => {
+        const orgParser = new TextParser()
+        const text = "[[https://abc.png]]"
+        const orgNode = orgParser.parse(text)
+        const expected = new DocumentTextNode(0, text.length, [
+            new ImageTextNode(0, text.length, "https://abc.png")
+        ])
+        TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
+    })
 });
