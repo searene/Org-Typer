@@ -7,6 +7,7 @@ enum TextNodeType {
     Header = "Header",
     Paragraph = "Paragraph",
     CodeBlock = "CodeBlock",
+    Image = "Image",
 }
 
 export default TextNodeType;

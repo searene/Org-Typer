@@ -7,9 +7,8 @@ export class HeaderShallowProcessor implements ShallowProcessor {
 
     // TODO Check endPos?
     process(text: string, startPos: number, endPos: number): TextNode | undefined {
-        const pattern = new RegExp(`^[^]{${startPos}}(^\\*+)(\\s+)(.*$)`, 'm')
+        const pattern = new RegExp(`^.{${startPos}}(?<=^|\n)(\\*+)(\\s+)([^\n]*)`, "s")
         const match = pattern.exec(text);
-        // TODO Need to check performance: https://stackoverflow.com/questions/72490669/how-to-match-a-regex-pattern-from-a-certain-position-in-javascript/72491006?noredirect=1
         if (match == null || match.index !== 0) {
             return undefined;
         }

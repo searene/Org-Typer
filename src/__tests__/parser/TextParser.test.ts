@@ -2,6 +2,7 @@ import { expect, describe, it } from 'vitest'
 import BoldTextNode from '../../parser/node/BoldTextNode';
 import DocumentTextNode from '../../parser/node/DocumentTextNode';
 import HeaderTextNode from '../../parser/node/HeaderTextNode';
+import ImageTextNode from '../../parser/node/ImageTextNode';
 import ItalicTextNode from '../../parser/node/ItalicTextNode';
 import PlainTextNode from '../../parser/node/PlainTextNode';
 import TextParser from '../../parser/TextParser'
@@ -57,6 +58,15 @@ describe("Test text parser", () => {
         const orgNode = orgParser.parse("* My Title");
         const expected = new DocumentTextNode(0, 10, [
             new HeaderTextNode(0, 10, 1, 1, [new PlainTextNode(2, 10)])])
+        TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
+    })
+
+    it("can parse local image", () => {
+        const orgParser = new TextParser()
+        const orgNode = orgParser.parse("[[abc.png]]")
+        const expected = new DocumentTextNode(0, 10, [
+            new ImageTextNode(0, 10, "abc.png")
+        ])
         TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
     })
 });
