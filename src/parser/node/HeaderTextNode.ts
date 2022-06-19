@@ -8,6 +8,7 @@ export default class HeaderTextNode extends AbstractTextNode {
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Header]);
     nodeType = TextNodeType.Header;
     parent: TextNode | undefined = undefined;
+    hasChildren = true
 
     constructor(public start: number, public end: number, public level: number, private whitespaceCount: number, public children: TextNode[] = []) {
         super();

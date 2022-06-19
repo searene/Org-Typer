@@ -64,8 +64,8 @@ describe("Test text parser", () => {
     it("can parse local image", () => {
         const orgParser = new TextParser()
         const orgNode = orgParser.parse("[[abc.png]]")
-        const expected = new DocumentTextNode(0, 10, [
-            new ImageTextNode(0, 10, "abc.png")
+        const expected = new DocumentTextNode(0, 11, [
+            new ImageTextNode(0, 11, "abc.png")
         ])
         TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
     })

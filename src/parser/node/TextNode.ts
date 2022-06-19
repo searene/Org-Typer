@@ -14,6 +14,8 @@ export default interface TextNode {
      */
     end: number;
 
+    hasChildren: boolean
+
     children: TextNode[];
     parent: TextNode | undefined;
     ownInlineStyles: Set<InlineStyle>

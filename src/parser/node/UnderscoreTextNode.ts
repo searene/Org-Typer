@@ -10,6 +10,7 @@ export default class UnderscoreTextNode extends AbstractTextNode {
     nodeType = TextNodeType.Underscore;
     children: TextNode[] = [];
     parent: TextNode | undefined = undefined;
+    hasChildren = true
 
     constructor(public start: number, public end: number, child?: TextNode) {
         super();

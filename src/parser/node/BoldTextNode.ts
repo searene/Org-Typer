@@ -9,6 +9,7 @@ export default class BoldTextNode extends AbstractTextNode {
     nodeType = TextNodeType.Bold;
     children: TextNode[] = [];
     parent: TextNode | undefined = undefined;
+    hasChildren = true
 
     constructor(public start: number, public end: number, child?: TextNode) {
         super();

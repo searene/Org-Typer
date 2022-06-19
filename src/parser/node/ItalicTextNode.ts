@@ -9,6 +9,7 @@ export default class ItalicTextNode extends AbstractTextNode {
     nodeType = TextNodeType.Italic;
     children: TextNode[] = [];
     parent: TextNode | undefined = undefined;
+    hasChildren = true
 
     constructor(public start: number, public end: number, child?: TextNode) {
         super();

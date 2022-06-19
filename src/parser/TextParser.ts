@@ -8,11 +8,13 @@ import UnderscoreTextNode from "./node/UnderscoreTextNode";
 import { OffsetRange } from "./OffsetRange";
 import { HeaderShallowProcessor } from "./processor/HeaderShallowProcessor";
 import { ShallowProcessor } from "./processor/interface/ComponentProcessor";
+import {ImageShallowProcessor} from "./processor/ImageShallowProcessor";
 
 export default class TextParser { 
 
     private static processors: ShallowProcessor[] = [
         new HeaderShallowProcessor(),
+        new ImageShallowProcessor(),
     ];
 
     constructor() {}
@@ -55,7 +57,9 @@ export default class TextParser {
         for (const shallowProcessor of TextParser.processors) {
             const textNode = shallowProcessor.process(text, start, end);
             if (textNode != undefined) {
-                this.parseInlineChildren(text, textNode, textNode.getStartIndexOfChildren(), textNode.getEndIndexOfChildren());
+                if (textNode.hasChildren) {
+                    this.parseInlineChildren(text, textNode, textNode.getStartIndexOfChildren(), textNode.getEndIndexOfChildren());
+                }
                 return textNode;
             }
         }

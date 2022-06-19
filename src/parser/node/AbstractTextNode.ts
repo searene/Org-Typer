@@ -30,6 +30,7 @@ export default abstract class AbstractTextNode implements TextNode {
     }
 
     abstract nodeType: TextNodeType;
+    abstract hasChildren: boolean;
     abstract start: number;
     abstract end: number;
     abstract children: TextNode[];

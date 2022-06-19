@@ -7,6 +7,7 @@ export default class PlainTextNode extends AbstractTextNode {
     nodeType = TextNodeType.Text;
     children: TextNode[] = [];
     parent: TextNode | undefined = undefined;
+    hasChildren = false
 
     constructor(public start: number, public end: number) {
         super();
