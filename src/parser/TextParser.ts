@@ -56,7 +56,7 @@ export default class TextParser {
         for (const shallowProcessor of TextParser.processors) {
             const textNode = shallowProcessor.process(text, start, end);
             if (textNode != undefined) {
-                if (textNode.hasChildren) {
+                if (textNode.canHaveChildren) {
                     this.parseInlineChildren(text, textNode, textNode.getStartIndexOfChildren(), textNode.getEndIndexOfChildren());
                 }
                 return textNode;

@@ -16,7 +16,8 @@ export class HeaderShallowProcessor implements ShallowProcessor {
         const spaceCount = match[2].length;
         const headerContentsStartPos = startPos + headerLevel + spaceCount;
         const headerContentsEndPos = headerContentsStartPos + match[3].length;
-        return new HeaderTextNode(startPos, headerContentsEndPos, headerLevel, spaceCount);
+        return new HeaderTextNode(startPos, headerContentsEndPos, headerLevel, spaceCount,
+            [], match[1] + match[2], "");
     }
 
 }

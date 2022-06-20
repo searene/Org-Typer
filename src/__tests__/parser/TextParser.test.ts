@@ -57,7 +57,7 @@ describe("Test text parser", () => {
         const orgParser = new TextParser();
         const orgNode = orgParser.parse("* My Title");
         const expected = new DocumentTextNode(0, 10, [
-            new HeaderTextNode(0, 10, 1, 1, [new PlainTextNode(2, 10)])])
+            new HeaderTextNode(0, 10, 1, 1, [new PlainTextNode(2, 10)], "* ", "")])
         TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
     })
 
@@ -65,7 +65,7 @@ describe("Test text parser", () => {
         const orgParser = new TextParser()
         const orgNode = orgParser.parse("[[abc.png]]")
         const expected = new DocumentTextNode(0, 11, [
-            new ImageTextNode(0, 11, "abc.png")
+            new ImageTextNode(0, 11, "abc.png", "[[", "]]")
         ])
         TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
     })
@@ -75,7 +75,7 @@ describe("Test text parser", () => {
         const text = "[[https://abc.png]]"
         const orgNode = orgParser.parse(text)
         const expected = new DocumentTextNode(0, text.length, [
-            new ImageTextNode(0, text.length, "https://abc.png")
+            new ImageTextNode(0, text.length, "https://abc.png", "[[", "]]")
         ])
         TextNodeTestUtils.isEqualWithoutCheckingParent(orgNode, expected);
     })

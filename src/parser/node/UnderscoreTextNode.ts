@@ -6,7 +6,7 @@ import TextNodeType from "./type/TextNodeType";
 export default class UnderscoreTextNode extends AbstractTextNode {
 
     ownInlineStyles: Set<InlineStyle> = new Set([InlineStyle.Underscore])
-    nodeType = TextNodeType.Underscore;
+    nodeType = TextNodeTyLeafStylere;LeafStyle
     children: TextNode[] = [];
     parent: TextNode | undefined = undefined;
     hasChildren = true

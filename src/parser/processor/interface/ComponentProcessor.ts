@@ -7,7 +7,7 @@ export type ProcessedComponent = {
 }
 
 /**
- * Try to get a org node, without filling its children (which is why we call it "shallow" processing).
+ * Try to get an org node, without filling its children (which is why we call it "shallow" processing).
  */
 export interface ShallowProcessor {
 

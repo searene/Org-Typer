@@ -20,7 +20,7 @@ export class InlineStyleGenerator {
                 ["font-weight", "bold"],
             ]);
         } else {
-            // TODO Add more accodring to https://www.w3schools.com/tags/tag_hn.asp
+            // TODO Add more according to https://www.w3schools.com/tags/tag_hn.asp
             return new Map([
                 ["display", "block"],
                 ["font-size", "0.67em"],

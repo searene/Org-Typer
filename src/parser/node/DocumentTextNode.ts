@@ -6,7 +6,7 @@ export default class DocumentTextNode extends AbstractTextNode {
 
     nodeType = TextNodeType.Document;
     parent = undefined;
-    hasChildren = true
+    canHaveChildren = true
 
     constructor(public start: number, public end: number, public children: TextNode[]) {
         super();

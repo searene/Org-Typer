@@ -14,7 +14,12 @@ export default interface TextNode {
      */
     end: number;
 
-    hasChildren: boolean
+    /**
+     * Can this node have children? Note that this property only denotes that the current node
+     * can have children, but it doesn't require the node to have them. In other words, the
+     * "children" property can be empty even if "canHaveChildren" is true.
+     */
+    canHaveChildren: boolean
 
     children: TextNode[];
     parent: TextNode | undefined;

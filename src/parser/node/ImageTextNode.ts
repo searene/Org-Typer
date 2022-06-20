@@ -6,9 +6,9 @@ export default class ImageTextNode extends AbstractTextNode {
     nodeType: TextNodeType = TextNodeType.Image;
     children: TextNode[] = [];
     parent: TextNode | undefined;
-    hasChildren = false
+    canHaveChildren = false
 
-    constructor(public start: number, public end: number, public url: string) {
+    constructor(public start: number, public end: number, public url: string, public prefix: string, public suffix: string) {
         super()
     }
     getStartIndexOfChildren(): number {

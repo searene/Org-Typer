@@ -14,7 +14,7 @@ export class ImageShallowProcessor implements ShallowProcessor {
             ^.{${startPos}}                      // jump to the start position
             (?<=^|\n|)                           // start of a line
             (\\[\\[)                             // [[
-            (                                    // start matching image links/files
+            (                                    // start of matching image links/files
             ([^\n]*\.(jpeg|jpg|png|gif|bmp|svg)) // image files
             |(https?://[^\n]*)                   // image links
             )                                    // end of matching image links/files
@@ -29,7 +29,7 @@ export class ImageShallowProcessor implements ShallowProcessor {
         const trailingBrackets = match[6]
         const imageNodeStartPos = startPos
         const imageNodeEndPos = startPos + leadingBrackets.length + url.length + trailingBrackets.length
-        return new ImageTextNode(imageNodeStartPos, imageNodeEndPos, url)
+        return new ImageTextNode(imageNodeStartPos, imageNodeEndPos, url, leadingBrackets, trailingBrackets)
     }
 
 }
